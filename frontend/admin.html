@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code to Career Challenge - Brototype - Super Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header>
+    <div class="logo-container">
+      <a href="https://www.brototype.com/ref=codetocareer-compailer" target="_blank" rel="noopener noreferrer"
+          style="display: flex; align-items: center;">
+          <img
+            src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
+            height="20" alt="Brototype">
+        </a>
+    </div>
+    <div class="nav-buttons">
+      <a href="index.html" class="btn-admin-nav">Go to Challenge</a>
+      <button class="btn-logout" id="adminLogoutBtn" style="display: none;">Logout Admin</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- VIEW 1: Admin Login Card -->
+    <section class="view active" id="adminLoginView">
+      <div class="card">
+        <h2 class="card-title">Admin Console</h2>
+        <p class="card-subtitle">Log in to monitor leads and push queues</p>
+        
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="adminEmail">Admin Email</label>
+            <input type="email" id="adminEmail" placeholder="admin@brototype.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="adminPassword">Password</label>
+            <input type="password" id="adminPassword" placeholder="••••••••" required>
+          </div>
+          
+          <button type="submit" class="btn-primary" id="adminLoginSubmitBtn">
+            <span>Access Dashboard</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Dashboard Overview & Controls -->
+    <section class="view" id="adminDashboardView">
+      <div class="admin-grid">
+        
+        <!-- Row 1: Key Analytics Stat Blocks -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Signups (Leads)</div>
+            <div class="stat-value" id="statTotalLeads">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">OTP Completion Rate</div>
+            <div class="stat-value" id="statOtpRate">0%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">CRM Success Pushes</div>
+            <div class="stat-value" id="statCrmSuccess" style="color: var(--success-color);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">CRM Retrying / Dead</div>
+            <div class="stat-value" id="statCrmFailed">0 / 0</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Leads Management Table -->
+        <div class="lesson-details-card" style="background: var(--bg-card);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <h2 class="lesson-details-title" style="margin-bottom: 0;">Lead Registry</h2>
+            <button class="btn-primary" id="exportCsvBtn" style="width: auto; padding: 8px 20px; font-size: 14px;">
+              Export CSV
+            </button>
+          </div>
+
+          <!-- Filters Bar -->
+          <div class="filter-bar">
+            <input type="text" id="searchFilter" placeholder="Search by name or phone...">
+            
+            <select id="qualificationFilter">
+              <option value="">All Qualifications</option>
+              <option value="Pursuing Plus Two">Pursuing Plus Two</option>
+              <option value="Plus Two completed">Plus Two completed</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Pursuing Degree">Pursuing Degree</option>
+              <option value="Degree completed">Degree completed</option>
+              <option value="Postgraduate">Postgraduate</option>
+              <option value="Working professional">Working professional</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <select id="countryFilter">
+              <option value="">All Countries</option>
+              <!-- Populated dynamically or simple listing -->
+              <option value="India">India</option>
+              <option value="United Arab Emirates">United Arab Emirates</option>
+              <option value="United States">United States</option>
+              <option value="United Kingdom">United Kingdom</option>
+            </select>
+
+            <input type="text" id="sourceFilter" placeholder="Campaign Source ID...">
+            
+            <button class="btn-small" id="applyFiltersBtn" style="padding: 12px 20px;">Apply</button>
+            <button class="btn-small" id="resetFiltersBtn" style="padding: 12px 20px; background: rgba(255,255,255,0.02)">Clear</button>
+          </div>
+
+          <!-- Leads Table -->
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Country</th>
+                  <th>Qualification</th>
+                  <th>Source ID</th>
+                  <th>Signup Date</th>
+                </tr>
+              </thead>
+              <tbody id="leadsTableBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-muted);">Click "Apply" or refresh to load leads list...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-container">
+            <span id="paginationInfo" style="font-size: 13px; color: var(--text-muted)">Showing page 1 of 1</span>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-small" id="prevPageBtn" disabled>Previous</button>
+              <button class="btn-small" id="nextPageBtn" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: CRM Delivery Retries Queue -->
+        <div class="lesson-details-card" style="background: var(--bg-card);">
+          <h2 class="lesson-details-title" style="margin-bottom: 8px;">CRM Delivery Retries Queue</h2>
+          <p class="card-subtitle" style="text-align: left; margin-bottom: 20px;">List of failed and dead push requests. Click retry to run immediate push.</p>
+          
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>User / Phone</th>
+                  <th>Queue Status</th>
+                  <th>Attempts</th>
+                  <th>Next Retry At</th>
+                  <th>Last Response Log</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="crmQueueTableBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; color: var(--text-muted);">No failed items currently in CRM queue.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

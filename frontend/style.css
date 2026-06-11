@@ -1,0 +1,1205 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&family=Outfit:wght@500;700;900&display=swap');
+
+:root {
+  --bg-dark: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --border-color: #e2e8f0;
+  --border-focus: rgba(255, 94, 58, 0.6);
+  
+  --primary-gradient: linear-gradient(135deg, #ff5e3a 0%, #ff2a54 100%);
+  --primary-color: #ff5e3a;
+  --primary-glow: rgba(255, 94, 58, 0.15);
+  
+  --success-color: #10b981;
+  --error-color: #ef4444;
+  --warning-color: #f59e0b;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dark: #1e293b;
+  
+  --font-heading: 'Outfit', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-code: 'Fira Code', monospace;
+  
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 94, 58, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 42, 84, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+/* Header */
+header {
+  padding: 20px 5%;
+  background-color: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.logo-container img {
+  height: 100%;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn-logout, .btn-admin-nav {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-logout:hover, .btn-admin-nav:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Main Container */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Views Setup */
+.view {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Forms & Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 30px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  max-width: 480px;
+  margin: 40px auto;
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.card-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Custom Country Code Phone Input Grid */
+.phone-grid {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+}
+
+input, select {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-main);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  transition: var(--transition);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+/* Checkbox Consent */
+.consent-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 20px 0;
+  cursor: pointer;
+}
+
+.consent-container input {
+  width: auto;
+  margin-top: 5px;
+}
+
+.consent-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Action Buttons */
+.btn-primary {
+  width: 100%;
+  background: var(--primary-gradient);
+  border: none;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(255, 94, 58, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 94, 58, 0.35);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* OTP Code Box */
+.otp-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.otp-digit {
+  width: 50px;
+  height: 55px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 8px;
+  background: var(--bg-input);
+}
+
+.resend-text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 15px;
+}
+
+.resend-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.resend-link:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Floating Alerts */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.toast {
+  background: rgba(20, 20, 27, 0.95);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  color: var(--text-main);
+  padding: 16px 24px;
+  margin-top: 10px;
+  min-width: 280px;
+  animation: slideIn 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Playground / Compiler View Grid */
+.playground-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+  .playground-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Lesson Sidebar */
+.lesson-sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.lesson-item {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lesson-item:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.lesson-item.active {
+  background: rgba(255, 94, 58, 0.08);
+  border-color: var(--primary-color);
+}
+
+.lesson-item-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.badge-complete {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Compiler Main Area */
+.compiler-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lesson-details-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.lesson-details-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.lesson-details-concept {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* Old compiler styles removed */
+
+/* Admin Dashboard CSS */
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--primary-color);
+  margin-top: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Table Controls */
+.filter-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-bar input, .filter-bar select {
+  width: auto;
+  min-width: 180px;
+  flex: 1;
+}
+
+.table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  backdrop-filter: blur(10px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background: rgba(0,0,0,0.2);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.btn-small {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-small:hover:not(:disabled) {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-small:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* CRM Queue Table Badge */
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.failed {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning-color);
+}
+
+.status-badge.dead {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
+}
+
+.status-badge.succeeded {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+}
+
+/* ============================================================
+   CSS Custom Properties — Dark / Light Themes
+   ============================================================ */
+#playgroundView {
+  --bg-app:      #1e1e1e;
+  --bg-bar:      #333333;
+  --bg-sidebar:  #252526;
+  --bg-tabs:     #252526;
+  --bg-tab:      #2d2d2d;
+  --bg-tab-active: #1e1e1e;
+  --bg-terminal: #1e1e1e;
+  --border:      #1a1a1a;
+  --border-drag: #414141;
+  --text:        #cccccc;
+  --text-dim:    #858585;
+  --text-bright: #ffffff;
+  --hover:       #2a2d2e;
+  --active-item: #37373d;
+  --accent:      #007acc;
+}
+
+body.light #playgroundView {
+  /* Exact VS Code Light+ colors */
+  --bg-app:        #ffffff;   /* editor.background */
+  --bg-bar:        #dddddd;   /* titleBar.activeBackground */
+  --bg-sidebar:    #f3f3f3;   /* sideBar.background */
+  --bg-tabs:       #f3f3f3;   /* editorGroupHeader.tabsBackground */
+  --bg-tab:        #ececec;   /* tab.inactiveBackground */
+  --bg-tab-active: #ffffff;   /* tab.activeBackground */
+  --bg-terminal:   #ffffff;   /* terminal.background */
+  --border:        #e5e5e5;   /* sideBar.border / editor borders */
+  --border-drag:   #c8c8c8;
+  --text:          #3b3b3b;   /* editor foreground */
+  --text-dim:      #6e7681;   /* tab.inactiveForeground */
+  --text-bright:   #000000;
+  --hover:         #e8e8e8;   /* list.hoverBackground */
+  --active-item:   #d6ebff;   /* list.activeSelectionBackground */
+  --accent:        #005fb8;   /* focusBorder / tab.activeBorderTop */
+}
+
+/* VS Code Light+ — Activity Bar stays dark (exact VSCode behaviour) */
+body.light #playgroundView .activity-bar {
+  background: #2c2c2c;        /* activityBar.background */
+  border-right-color: #2c2c2c;
+}
+body.light #playgroundView .action-item       { color: #ffffff80; }
+body.light #playgroundView .action-item:hover { color: #ffffff; }
+body.light #playgroundView .action-item.active {
+  color: #ffffff;
+  border-left-color: #ffffff;
+}
+
+/* Active file in sidebar */
+body.light #playgroundView .file-item.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+body.light #playgroundView .file-item.active .delete-file-btn { color: #ffffff99; }
+
+/* Tabs — VS Code Light+ top-border accent on active */
+body.light #playgroundView .tab            { color: #6e7681; background: #ececec; }
+body.light #playgroundView .tab.active     { color: #000000; background: #ffffff; border-top-color: #005fb8; }
+
+/* Terminal — VS Code Light uses white terminal with dark text */
+body.light #playgroundView .terminal-panel  { background: #ffffff; }
+body.light #playgroundView .terminal-topbar {
+  background: #f3f3f3;
+  border-bottom: 1px solid #e5e5e5;
+}
+body.light #playgroundView .term-tab        { color: #6e7681; }
+body.light #playgroundView .term-tab.active {
+  color: #000000;
+  border-bottom-color: #005fb8;
+}
+body.light #playgroundView .status-text     { color: #6e7681; }
+body.light #playgroundView .clear-btn       { color: #6e7681; border-color: #c8c8c8; }
+body.light #playgroundView .clear-btn:hover { color: #3b3b3b; border-color: #999; background: #e8e8e8; }
+body.light #playgroundView .drag-handle     { background: #c8c8c8; }
+body.light #playgroundView .drag-handle:hover,
+body.light #playgroundView .drag-handle.dragging { background: #005fb8; }
+
+/* Terminal output text for white terminal */
+body.light #playgroundView .terminal-output          { color: #000000; }
+body.light #playgroundView .terminal-output .out     { color: #000000; }
+body.light #playgroundView .terminal-output .err,
+body.light #playgroundView .terminal-output .errblock{ color: #cd3131; }  /* VS Code terminal red */
+body.light #playgroundView .terminal-output .sys     { color: #6e7681; font-style: italic; }
+
+/* Section header in sidebar */
+body.light #playgroundView .section-header { color: #6f6f6f; }
+
+/* ============================================================
+   App Shell & View Override
+   ============================================================ */
+body.playground-active {
+  overflow: hidden;
+  height: 100vh;
+}
+
+#playgroundView.active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-app);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Title Bar
+   ============================================================ */
+.titlebar {
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #333333; /* always dark */
+  border-bottom: 1px solid #1a1a1a;
+  transition: background 0.25s;
+}
+.titlebar-left  { position: absolute; left: 15px; display: flex; align-items: center; }
+.titlebar-right { position: absolute; right: 12px; display: flex; align-items: center; }
+.titlebar-title { font-size: 13px; font-weight: 500; color: #cccccc; white-space: nowrap; }
+
+.titlebar .icon-btn {
+  color: #ffffff !important;
+}
+.titlebar .icon-btn:hover {
+  background: #2a2d2e !important;
+}
+
+.desktop-logo { display: flex; align-items: center; }
+.mobile-logo  { display: none; }
+
+/* ============================================================
+   Workspace
+   ============================================================ */
+.workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.mobile-only-btn {
+  display: none !important;
+}
+.mobile-view-tabs {
+  display: none;
+}
+
+/* ============================================================
+   Activity Bar
+   ============================================================ */
+.activity-bar {
+  flex-shrink: 0;
+  width: 48px;
+  background: var(--bg-bar);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+  border-right: 1px solid var(--border);
+}
+.action-item {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-dim);
+  transition: color 0.15s;
+}
+.action-item:hover { color: var(--text); }
+.action-item.active { color: var(--text-bright); border-left: 2px solid var(--text-bright); }
+.action-item svg { width: 22px; height: 22px; }
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+.sidebar {
+  flex-shrink: 0;
+  width: 240px;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.sidebar-title {
+  padding: 10px 16px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 10px 3px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-label {
+  display: flex; align-items: center; gap: 4px;
+}
+.file-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 4px;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 24px;
+  cursor: pointer;
+  color: var(--text);
+  user-select: none;
+}
+.file-item:hover    { background: var(--hover); }
+.file-item.active   { background: var(--active-item); color: var(--text-bright); }
+.delete-file-btn {
+  margin-left: auto;
+  display: none;
+  background: none; border: none;
+  color: var(--text-dim);
+  cursor: pointer; padding: 0 4px;
+  font-size: 12px;
+  line-height: 1;
+}
+.file-item:hover .delete-file-btn { display: block; }
+.delete-file-btn:hover { color: #f48771; }
+
+/* ============================================================
+   Main Content
+   ============================================================ */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-app);
+}
+
+/* Tabs Bar */
+.tabs-bar {
+  flex-shrink: 0;
+  height: 35px;
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-tabs);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.tabs-list {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.tab {
+  flex-shrink: 0;
+  height: 100%;
+  padding: 0 14px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px;
+  color: var(--text-dim);
+  background: var(--bg-tab);
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.tab.active {
+  background: var(--bg-tab-active);
+  color: var(--text-bright);
+  border-top: 2px solid var(--accent);
+}
+
+/* Toolbar */
+.toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+.save-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.save-label.visible { opacity: 1; }
+
+/* Editor Wrap */
+.editor-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+.editor-wrap .CodeMirror {
+  flex: 1;
+  height: 100% !important;
+  font-family: 'Consolas', 'Courier New', monospace !important;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.editor-wrap .CodeMirror-gutters {
+  border-right: none !important;
+}
+
+/* Drag Handle */
+.drag-handle {
+  flex-shrink: 0;
+  height: 5px;
+  background: var(--border-drag);
+  cursor: ns-resize;
+  transition: background 0.15s;
+}
+.drag-handle:hover,
+.drag-handle.dragging { background: var(--accent); }
+
+/* Terminal Panel */
+.terminal-panel {
+  flex-shrink: 0;
+  height: 28%;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-terminal);
+  border-top: 1px solid var(--border);
+}
+.terminal-topbar {
+  flex-shrink: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.term-tab {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text-dim);
+  padding: 0 4px 2px;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.term-tab:hover { color: var(--text); }
+.term-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+.status-badge {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #555;
+  transition: background 0.3s;
+}
+.status-dot.loading { background: #f59e0b; animation: blink 1.4s infinite; }
+.status-dot.ready   { background: #10b981; }
+.status-dot.running { background: var(--accent); animation: blink 0.9s infinite; }
+.status-dot.error   { background: #f48771; }
+.status-text { font-size: 11px; color: var(--text-dim); }
+
+.clear-btn {
+  margin-left: 12px;
+  background: none;
+  border: 1px solid var(--border-drag);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 3px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.clear-btn:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+  background: var(--hover);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: .5; }
+  50%       { opacity: 1; }
+}
+
+.terminal-output {
+  flex: 1;
+  padding: 8px 16px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+.terminal-output span      { white-space: pre-wrap; }
+.terminal-output .out      { color: #d4d4d4; }
+.terminal-output .err,
+.terminal-output .errblock { color: #f48771; }
+.terminal-output .sys      { color: #858585; font-style: italic; }
+
+/* Inline terminal input */
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  min-height: 1.5em;
+}
+.terminal-input-row span {
+  flex-shrink: 0;
+}
+.terminal-inline-input {
+  background:   transparent;
+  border:       none;
+  outline:      none;
+  color:        #d4d4d4;
+  caret-color:  #ffffff;
+  font-family:  'Consolas', 'Courier New', monospace;
+  font-size:    13px;
+  line-height:  1.5;
+  flex:         1;
+  min-width:    0;
+  padding:      0;
+  margin:       0;
+}
+.terminal-inline-input:focus { outline: none; }
+body.light #playgroundView .terminal-inline-input { color: #1a1a1a; caret-color: #000; }
+
+/* Shared Icon Button */
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.icon-btn:hover    { background: var(--hover); }
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+.icon-btn.hidden   { display: none !important; }
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.action-btn:active { transform: scale(.96); }
+.action-btn:disabled { opacity: 0.4; cursor: default; }
+.action-btn.hidden { display: none !important; }
+
+.run-btn  { background: #1a7a3a; color: #c8f0d4; }
+.run-btn:hover  { background: #1f8f44; }
+
+.stop-btn { background: #7a2020; color: #f8c8c8; }
+.stop-btn:hover { background: #963030; }
+
+/* ============================================================
+   Mobile Responsive Styles (max-width: 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+  #playgroundView .titlebar {
+    height: 56px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 10px !important;
+    position: relative !important;
+  }
+  #playgroundView .titlebar-left {
+    position: absolute !important;
+    left: 10px !important;
+    top: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 24px !important;
+  }
+  #playgroundView .titlebar-right {
+    position: absolute !important;
+    right: 10px !important;
+    top: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 24px !important;
+  }
+  #playgroundView .desktop-logo {
+    display: none !important;
+  }
+  #playgroundView .mobile-logo {
+    display: block !important;
+    height: 20px !important;
+    margin-bottom: 2px !important;
+  }
+  #playgroundView .titlebar-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  #playgroundView .titlebar-title {
+    position: static !important;
+    transform: none !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    color: #858585 !important;
+    max-width: 95% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    text-align: center !important;
+    pointer-events: auto !important;
+  }
+
+  #playgroundView .mobile-only-btn {
+    display: flex !important;
+  }
+
+  #playgroundView .mobile-view-tabs {
+    display: flex;
+    flex-shrink: 0;
+    height: 40px;
+    background: var(--bg-tabs);
+    border-bottom: 1px solid var(--border);
+  }
+
+  #playgroundView .mobile-tab {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: var(--bg-tab);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    gap: 6px;
+  }
+  #playgroundView .mobile-tab.active {
+    background: var(--bg-tab-active);
+    color: var(--text-bright);
+    border-bottom-color: var(--accent);
+  }
+
+  #playgroundView .activity-bar {
+    display: none !important;
+  }
+
+  #playgroundView .sidebar {
+    position: absolute;
+    left: -250px;
+    top: 56px;
+    bottom: 0;
+    width: 240px;
+    z-index: 1000;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4);
+    transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  #playgroundView .sidebar.mobile-open {
+    left: 0;
+  }
+
+  #playgroundView .sidebar-overlay {
+    display: none;
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  #playgroundView .sidebar-overlay.active {
+    display: block;
+  }
+
+  #playgroundView .drag-handle {
+    display: none !important;
+  }
+
+  #playgroundView .tabs-list {
+    display: none !important;
+  }
+
+  #playgroundView .tabs-bar {
+    justify-content: flex-end;
+    height: 40px;
+  }
+
+  #playgroundView .main-content.mobile-show-editor .editor-wrap {
+    display: flex !important;
+    flex: 1 !important;
+  }
+  #playgroundView .main-content.mobile-show-editor .terminal-panel {
+    display: none !important;
+  }
+
+  #playgroundView .main-content.mobile-show-terminal .editor-wrap {
+    display: none !important;
+  }
+  #playgroundView .main-content.mobile-show-terminal .terminal-panel {
+    display: flex !important;
+    flex: 1 !important;
+    height: 100% !important;
+  }
+}
+

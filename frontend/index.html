@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code to Career Challenge - Brototype</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- CodeMirror for Python Syntax Highlighting and Code Editing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+</head>
+<body>
+
+  <!-- Floating Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <header>
+    <div class="logo-container">
+      <a href="https://www.brototype.com/ref=codetocareer-compailer" target="_blank" rel="noopener noreferrer"
+          style="display: flex; align-items: center;">
+          <img
+            src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
+            height="20" alt="Brototype">
+        </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- VIEW 1: Signup / Lead Generation Form -->
+    <section class="view active" id="signupView">
+      <div class="card">
+        <h2 class="card-title" id="authTitle">Code to Career Challenge</h2>
+        <p class="card-subtitle" id="authSubtitle">Unlock the Python Playground & test your coding aptitude</p>
+        
+        <form id="signupForm">
+          <div class="form-group" id="nameFieldGroup">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="Enter your full name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phoneNumber">WhatsApp Number</label>
+            <div class="phone-grid">
+              <select id="countryCode">
+                <option value="+91" selected>IN (+91)</option>
+                <option value="+971">AE (+971)</option>
+                <option value="+1">US (+1)</option>
+                <option value="+44">GB (+44)</option>
+                <option value="+966">SA (+966)</option>
+                <option value="+968">OM (+968)</option>
+                <option value="+974">QA (+974)</option>
+                <option value="+965">KW (+965)</option>
+                <option value="+973">BH (+973)</option>
+                <option value="+94">LK (+94)</option>
+                <option value="+977">NP (+977)</option>
+                <option value="+960">MV (+960)</option>
+              </select>
+              <input type="tel" id="phoneNumber" placeholder="98765 43210" required>
+            </div>
+          </div>
+          
+          <div class="form-group" id="qualificationFieldGroup">
+            <label for="qualification">Current Qualification</label>
+            <select id="qualification" required>
+              <option value="" disabled selected>Select your qualification</option>
+              <option value="Pursuing Plus Two">Pursuing Plus Two</option>
+              <option value="Plus Two completed">Plus Two completed</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Pursuing Degree">Pursuing Degree</option>
+              <option value="Degree completed">Degree completed</option>
+              <option value="Postgraduate">Postgraduate</option>
+              <option value="Working professional">Working professional</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          <label class="consent-container" id="consentFieldGroup">
+            <input type="checkbox" id="marketingConsent" required checked>
+            <span class="consent-text">
+              I consent to receive WhatsApp messages and career guidance updates from Brototype. I understand I can opt-out at any time.
+            </span>
+          </label>
+          
+          <button type="submit" class="btn-primary" id="signupSubmitBtn">
+            <span id="authSubmitText">Send WhatsApp Verification</span>
+          </button>
+        </form>
+
+        <p class="resend-text" style="margin-top: 20px;">
+          <span id="authTogglePrefix">Already registered? </span>
+          <button class="resend-link" id="authToggleBtn" type="button">Log In</button>
+        </p>
+      </div>
+    </section>
+
+    <!-- VIEW 2: OTP Verification Screen -->
+    <section class="view" id="otpView">
+      <div class="card">
+        <h2 class="card-title">Verify Your WhatsApp</h2>
+        <p class="card-subtitle" id="otpSubtitle">We sent a 6-digit code to +91 98765 43210</p>
+        
+        <form id="otpForm">
+          <div class="otp-container">
+            <input type="text" class="otp-digit" maxlength="1" required data-index="0" autofocus>
+            <input type="text" class="otp-digit" maxlength="1" required data-index="1">
+            <input type="text" class="otp-digit" maxlength="1" required data-index="2">
+            <input type="text" class="otp-digit" maxlength="1" required data-index="3">
+            <input type="text" class="otp-digit" maxlength="1" required data-index="4">
+            <input type="text" class="otp-digit" maxlength="1" required data-index="5">
+          </div>
+          
+          <button type="submit" class="btn-primary" id="otpVerifyBtn">
+            <span>Verify & Start Learning</span>
+          </button>
+        </form>
+        
+        <p class="resend-text">
+          Didn't receive the code? 
+          <button class="resend-link" id="resendOtpBtn" disabled>Resend in 30s</button>
+        </p>
+        
+        <p class="resend-text" style="margin-top: 15px;">
+          <a href="#" id="changePhoneBtn" class="resend-link" style="color: var(--text-muted)">Change phone number</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- VIEW 3: Python Compiler / Playground (Gated) -->
+    <section class="view" id="playgroundView">
+      <div class="app-shell">
+        <!-- Title Bar -->
+        <div class="titlebar">
+          <div class="titlebar-left">
+            <button id="sidebarToggleBtn" class="icon-btn mobile-only-btn" title="Toggle Explorer">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+              </svg>
+            </button>
+            <a href="https://www.brototype.com/ref=codetocareer-compailer" target="_blank" rel="noopener noreferrer"
+              class="desktop-logo">
+              <img
+                src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
+                height="20" alt="Brototype">
+            </a>
+          </div>
+
+          <div class="titlebar-center">
+            <a href="https://www.brototype.com/ref=codetocareer-compailer" target="_blank" rel="noopener noreferrer"
+              class="mobile-logo">
+              <img
+                src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
+                height="20" alt="Brototype">
+            </a>
+            <span class="titlebar-title">Code to Career Challenge - Python Compiler</span>
+          </div>
+
+          <div class="titlebar-right">
+            <button id="themeToggleBtn" class="icon-btn" title="Toggle Theme">
+              <svg id="themeIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+            <button id="logoutBtn" class="icon-btn" title="Logout" style="margin-left: 8px;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Workspace -->
+        <div class="workspace">
+
+          <!-- Activity Bar -->
+          <div class="activity-bar">
+            <div class="action-item active" title="Explorer">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="sidebar">
+            <div class="sidebar-title">EXPLORER</div>
+            <div class="section-header">
+              <span class="section-label">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                </svg>
+                CHALLENGE FILES
+              </span>
+              <button id="newFileBtn" class="icon-btn" title="New File (.py)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+              </button>
+            </div>
+            <div class="file-list" id="sidebarFileList"></div>
+          </div>
+
+          <!-- Sidebar Overlay -->
+          <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+          <!-- Main Content -->
+          <div class="main-content mobile-show-editor">
+
+            <!-- Mobile View Navigation Tabs -->
+            <div class="mobile-view-tabs">
+              <button class="mobile-tab active" id="mobileTabEditor">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"
+                  style="margin-right: 4px; vertical-align: middle;">
+                  <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+                </svg>
+                Code
+              </button>
+              <button class="mobile-tab" id="mobileTabTerminal">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"
+                  style="margin-right: 4px; vertical-align: middle;">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z" />
+                </svg>
+                Output
+              </button>
+            </div>
+
+            <!-- Tabs + Toolbar -->
+            <div class="tabs-bar">
+              <div id="editorTabsContainer" class="tabs-list"></div>
+              <div class="toolbar">
+                <span id="saveStatus" class="save-label">Auto-saved</span>
+                <button id="runCodeBtn" class="action-btn run-btn" title="Run">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  Run
+                </button>
+                <button id="stopCodeBtn" class="action-btn stop-btn hidden" title="Stop">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                    <path d="M6 6h12v12H6z" />
+                  </svg>
+                  Stop
+                </button>
+              </div>
+            </div>
+
+            <!-- Code Editor -->
+            <div class="editor-wrap">
+              <textarea id="codeEditor"></textarea>
+            </div>
+
+            <!-- Drag Handle -->
+            <div class="drag-handle" id="terminalResizer"></div>
+
+            <!-- Terminal Panel -->
+            <div class="terminal-panel" id="terminalArea">
+
+              <!-- Top bar -->
+              <div class="terminal-topbar">
+                <span class="term-tab active">TERMINAL</span>
+                <div class="status-badge">
+                  <div class="status-dot" id="consoleStatusDot"></div>
+                  <span id="statusLabel" class="status-text">Initializing...</span>
+                </div>
+                <button id="clearOutputBtn" class="clear-btn" title="Clear output">Clear</button>
+              </div>
+
+              <!-- Scrollable output -->
+              <div class="terminal-output" id="consoleOutput">
+                <span class="sys">Loading Python runtime...</span>
+              </div>
+
+            </div><!-- /terminal-panel -->
+
+          </div><!-- /main-content -->
+        </div><!-- /workspace -->
+      </div><!-- /app-shell -->
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
