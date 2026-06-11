@@ -132,6 +132,9 @@ html, body {
 .titlebar-right { position: absolute; right: 12px; display: flex; align-items: center; }
 .titlebar-title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; }
 
+.desktop-logo { display: flex; align-items: center; }
+.mobile-logo  { display: none; }
+
 /* ============================================================
    Workspace — row (activity bar | sidebar | main)
    ============================================================ */
@@ -139,6 +142,15 @@ html, body {
   flex: 1;
   display: flex;
   overflow: hidden;          /* critical — keeps children from overflowing */
+  position: relative;
+}
+
+/* Hide mobile-only elements by default on desktop */
+.mobile-only-btn {
+  display: none !important;
+}
+.mobile-view-tabs {
+  display: none;
 }
 
 /* ============================================================
@@ -504,4 +516,174 @@ body.light .terminal-inline-input { color: #1a1a1a; caret-color: #000; }
 @keyframes slideIn {
   from { transform: translateX(110%); opacity: 0; }
   to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ============================================================
+   Mobile Responsive Styles (max-width: 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+  .titlebar {
+    height: 56px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 10px !important;
+    position: relative !important;
+  }
+  .titlebar-left {
+    position: absolute !important;
+    left: 10px !important;
+    top: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 24px !important;
+  }
+  .titlebar-right {
+    position: absolute !important;
+    right: 10px !important;
+    top: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 24px !important;
+  }
+  .desktop-logo {
+    display: none !important;
+  }
+  .mobile-logo {
+    display: block !important;
+    height: 20px !important;
+    margin-bottom: 2px !important;
+  }
+  .titlebar-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .titlebar-title {
+    position: static !important;
+    transform: none !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    color: var(--text-dim) !important;
+    max-width: 95% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    text-align: center !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-only-btn {
+    display: flex !important;
+  }
+
+  .mobile-view-tabs {
+    display: flex;
+    flex-shrink: 0;
+    height: 40px;
+    background: var(--bg-tabs);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-tab {
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: var(--bg-tab);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    gap: 6px;
+  }
+  .mobile-tab.active {
+    background: var(--bg-tab-active);
+    color: var(--text-bright);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Activity Bar & Sidebar Drawer */
+  .activity-bar {
+    display: none !important;
+  }
+
+  .sidebar {
+    position: absolute;
+    left: -250px;
+    top: 56px; /* immediately below taller mobile title bar */
+    bottom: 0;
+    width: 240px;
+    z-index: 1000;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4);
+    transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
+
+  /* Overlay for when sidebar drawer is open */
+  .sidebar-overlay {
+    display: none;
+    position: absolute;
+    top: 56px; /* below taller mobile title bar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  .sidebar-overlay.active {
+    display: block;
+  }
+
+  /* Hide resizer handle since resizing is automated via switching screens */
+  .drag-handle {
+    display: none !important;
+  }
+
+  /* Hide code files tab list to save header space */
+  .tabs-list {
+    display: none !important;
+  }
+
+  .tabs-bar {
+    justify-content: flex-end;
+    height: 40px;
+  }
+
+  /* Toggle Screens based on active view class */
+  .main-content.mobile-show-editor .editor-wrap {
+    display: flex !important;
+    flex: 1 !important;
+  }
+  .main-content.mobile-show-editor .terminal-panel {
+    display: none !important;
+  }
+
+  .main-content.mobile-show-terminal .editor-wrap {
+    display: none !important;
+  }
+  .main-content.mobile-show-terminal .terminal-panel {
+    display: flex !important;
+    flex: 1 !important;
+    height: 100% !important;
+  }
+
+  /* Adjust toast container for smaller screens */
+  .toast-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+  }
+  .toast {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
 }

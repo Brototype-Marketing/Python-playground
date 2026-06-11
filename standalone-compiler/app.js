@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWorker();
   initResizer();
   initToasts();
+  initMobileNav();
 });
 
 // ============================================================
@@ -226,10 +227,19 @@ function initWorker() {
       if (!code)   { showToast('Write some code first!', 'warning'); return; }
       if (!worker) { showToast('Worker not ready yet',   'error');   return; }
 
+      // Clear terminal output screen automatically
+      out.innerHTML = '';
+
       // Clear any pending stdin requests
       fetch('clear-stdin').catch(() => {});
 
       worker.postMessage({ type: 'run', code });
+
+      // Auto-switch to Output tab on mobile viewports
+      if (window.innerWidth <= 768) {
+        const tabTerminal = document.getElementById('mobileTabTerminal');
+        if (tabTerminal) tabTerminal.click();
+      }
     });
   }
 }
@@ -349,6 +359,14 @@ function switchFile(id) {
   persist(); renderFiles();
   const f = activeFile();
   if (editor && f) editor.setValue(f.content);
+
+  // Close mobile sidebar drawer if open
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar && sidebar.classList.contains('mobile-open')) {
+    sidebar.classList.remove('mobile-open');
+    if (overlay) overlay.classList.remove('active');
+  }
 }
 
 function deleteFile(id, e) {
@@ -462,4 +480,51 @@ function initResizer() {
     document.body.style.cursor = document.body.style.userSelect = '';
     if (editor) editor.refresh();
   });
+}
+
+// ============================================================
+// Mobile Navigation and Switching Logic
+// ============================================================
+function initMobileNav() {
+  const tabEditor = document.getElementById('mobileTabEditor');
+  const tabTerminal = document.getElementById('mobileTabTerminal');
+  const mainContent = document.querySelector('.main-content');
+
+  const sidebarBtn = document.getElementById('sidebarToggleBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  if (tabEditor && tabTerminal && mainContent) {
+    tabEditor.addEventListener('click', () => {
+      tabEditor.classList.add('active');
+      tabTerminal.classList.remove('active');
+      mainContent.classList.add('mobile-show-editor');
+      mainContent.classList.remove('mobile-show-terminal');
+      
+      // Crucial: refresh CodeMirror editor to recalculate width/height on view toggle
+      if (editor) {
+        setTimeout(() => editor.refresh(), 50);
+      }
+    });
+
+    tabTerminal.addEventListener('click', () => {
+      tabTerminal.classList.add('active');
+      tabEditor.classList.remove('active');
+      mainContent.classList.add('mobile-show-terminal');
+      mainContent.classList.remove('mobile-show-editor');
+    });
+  }
+
+  // Sidebar slide-out toggle
+  if (sidebarBtn && sidebar && overlay) {
+    sidebarBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    });
+  }
 }
