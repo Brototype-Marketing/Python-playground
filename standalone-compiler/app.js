@@ -56,7 +56,13 @@ function initTheme() {
     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`;
 
-  let light = false;
+  // Detect system color scheme preference
+  let light = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+
+  // Set initial theme
+  document.body.classList.toggle('light', light);
+  icon.innerHTML = light ? sunPath : moonPath;
+
   btn.addEventListener('click', () => {
     light = !light;
     document.body.classList.toggle('light', light);
@@ -436,8 +442,9 @@ function initEditor() {
   const textarea = document.getElementById('codeEditor');
   if (!textarea) return;
 
+  const isLight = document.body.classList.contains('light');
   editor = CodeMirror.fromTextArea(textarea, {
-    mode: 'python', theme: 'darcula',
+    mode: 'python', theme: isLight ? 'default' : 'darcula',
     lineNumbers: true, indentUnit: 4, tabSize: 4,
     lineWrapping: false, autofocus: true,
   });
