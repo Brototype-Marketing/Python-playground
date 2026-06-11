@@ -1,0 +1,507 @@
+/* ============================================================
+   CSS Custom Properties — Dark / Light Themes
+   ============================================================ */
+:root {
+  --bg-app:      #1e1e1e;
+  --bg-bar:      #333333;
+  --bg-sidebar:  #252526;
+  --bg-tabs:     #252526;
+  --bg-tab:      #2d2d2d;
+  --bg-tab-active: #1e1e1e;
+  --bg-terminal: #1e1e1e;
+  --border:      #1a1a1a;
+  --border-drag: #414141;
+  --text:        #cccccc;
+  --text-dim:    #858585;
+  --text-bright: #ffffff;
+  --hover:       #2a2d2e;
+  --active-item: #37373d;
+  --accent:      #007acc;
+}
+
+body.light {
+  /* Exact VS Code Light+ colors */
+  --bg-app:        #ffffff;   /* editor.background */
+  --bg-bar:        #dddddd;   /* titleBar.activeBackground */
+  --bg-sidebar:    #f3f3f3;   /* sideBar.background */
+  --bg-tabs:       #f3f3f3;   /* editorGroupHeader.tabsBackground */
+  --bg-tab:        #ececec;   /* tab.inactiveBackground */
+  --bg-tab-active: #ffffff;   /* tab.activeBackground */
+  --bg-terminal:   #ffffff;   /* terminal.background (VS Code Light uses white) */
+  --border:        #e5e5e5;   /* sideBar.border / editor borders */
+  --border-drag:   #c8c8c8;
+  --text:          #3b3b3b;   /* editor foreground */
+  --text-dim:      #6e7681;   /* tab.inactiveForeground */
+  --text-bright:   #000000;
+  --hover:         #e8e8e8;   /* list.hoverBackground */
+  --active-item:   #d6ebff;   /* list.activeSelectionBackground (light blue) */
+  --accent:        #005fb8;   /* focusBorder / tab.activeBorderTop */
+}
+
+/* VS Code Light+ — Activity Bar stays dark (exact VSCode behaviour) */
+body.light .activity-bar {
+  background: #2c2c2c;        /* activityBar.background */
+  border-right-color: #2c2c2c;
+}
+body.light .action-item       { color: #ffffff80; }
+body.light .action-item:hover { color: #ffffff; }
+body.light .action-item.active {
+  color: #ffffff;
+  border-left-color: #ffffff;
+}
+
+/* Active file in sidebar */
+body.light .file-item.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+body.light .file-item.active .delete-file-btn { color: #ffffff99; }
+
+/* Tabs — VS Code Light+ top-border accent on active */
+body.light .tab            { color: #6e7681; background: #ececec; }
+body.light .tab.active     { color: #000000; background: #ffffff; border-top-color: #005fb8; }
+
+/* Terminal — VS Code Light uses white terminal with dark text */
+body.light .terminal-panel  { background: #ffffff; }
+body.light .terminal-topbar {
+  background: #f3f3f3;
+  border-bottom: 1px solid #e5e5e5;
+}
+body.light .term-tab        { color: #6e7681; }
+body.light .term-tab.active {
+  color: #000000;
+  border-bottom-color: #005fb8;
+}
+body.light .status-text     { color: #6e7681; }
+body.light .clear-btn       { color: #6e7681; border-color: #c8c8c8; }
+body.light .clear-btn:hover { color: #3b3b3b; border-color: #999; background: #e8e8e8; }
+body.light .drag-handle     { background: #c8c8c8; }
+body.light .drag-handle:hover,
+body.light .drag-handle.dragging { background: #005fb8; }
+
+/* Terminal output text for white terminal */
+body.light .terminal-output          { color: #000000; }
+body.light .terminal-output .out     { color: #000000; }
+body.light .terminal-output .err,
+body.light .terminal-output .errblock{ color: #cd3131; }  /* VS Code terminal red */
+body.light .terminal-output .sys     { color: #6e7681; font-style: italic; }
+
+/* Section header in sidebar */
+body.light .section-header { color: #6f6f6f; }
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  background: var(--bg-app);
+  color: var(--text);
+}
+
+/* ============================================================
+   App Shell — full-screen column
+   ============================================================ */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Title Bar
+   ============================================================ */
+.titlebar {
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--bg-bar);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.25s;
+}
+.titlebar-left  { position: absolute; left: 15px; display: flex; align-items: center; }
+.titlebar-right { position: absolute; right: 12px; display: flex; align-items: center; }
+.titlebar-title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; }
+
+/* ============================================================
+   Workspace — row (activity bar | sidebar | main)
+   ============================================================ */
+.workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;          /* critical — keeps children from overflowing */
+}
+
+/* ============================================================
+   Activity Bar
+   ============================================================ */
+.activity-bar {
+  flex-shrink: 0;
+  width: 48px;
+  background: var(--bg-bar);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+  border-right: 1px solid var(--border);
+}
+.action-item {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-dim);
+  transition: color 0.15s;
+}
+.action-item:hover { color: var(--text); }
+.action-item.active { color: var(--text-bright); border-left: 2px solid var(--text-bright); }
+.action-item svg { width: 22px; height: 22px; }
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+.sidebar {
+  flex-shrink: 0;
+  width: 240px;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.sidebar-title {
+  padding: 10px 16px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text);
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 10px 3px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-label {
+  display: flex; align-items: center; gap: 4px;
+}
+.file-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 4px;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 24px;
+  cursor: pointer;
+  color: var(--text);
+  user-select: none;
+}
+.file-item:hover    { background: var(--hover); }
+.file-item.active   { background: var(--active-item); color: var(--text-bright); }
+.delete-file-btn {
+  margin-left: auto;
+  display: none;
+  background: none; border: none;
+  color: var(--text-dim);
+  cursor: pointer; padding: 0 4px;
+  font-size: 12px;
+  line-height: 1;
+}
+.file-item:hover .delete-file-btn { display: block; }
+.delete-file-btn:hover { color: #f48771; }
+
+/* ============================================================
+   Main Content — column (tabs | editor | handle | terminal)
+   The KEY fix: this is a FLEX COLUMN with overflow hidden.
+   Each child that must shrink needs min-height: 0.
+   ============================================================ */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;          /* do not remove */
+  background: var(--bg-app);
+}
+
+/* Tabs Bar */
+.tabs-bar {
+  flex-shrink: 0;            /* never shrink */
+  height: 35px;
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-tabs);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.tabs-list {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.tab {
+  flex-shrink: 0;
+  height: 100%;
+  padding: 0 14px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px;
+  color: var(--text-dim);
+  background: var(--bg-tab);
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.tab.active {
+  background: var(--bg-tab-active);
+  color: var(--text-bright);
+  border-top: 2px solid var(--accent);
+}
+
+/* Toolbar (run/stop/save) */
+.toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+.save-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.save-label.visible { opacity: 1; }
+
+/* ============================================================
+   Editor Wrap — grows to fill remaining space
+   ============================================================ */
+.editor-wrap {
+  flex: 1;
+  min-height: 0;             /* critical for flex shrink */
+  overflow: hidden;
+  display: flex;
+}
+.CodeMirror {
+  flex: 1;
+  height: 100% !important;
+  font-family: 'Consolas', 'Courier New', monospace !important;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.CodeMirror-gutters {
+  border-right: none !important;
+}
+
+/* ============================================================
+   Drag Handle
+   ============================================================ */
+.drag-handle {
+  flex-shrink: 0;
+  height: 5px;
+  background: var(--border-drag);
+  cursor: ns-resize;
+  transition: background 0.15s;
+}
+.drag-handle:hover,
+.drag-handle.dragging { background: var(--accent); }
+
+/* ============================================================
+   Terminal Panel
+   flex-shrink: 0 + explicit height = it NEVER disappears.
+   ============================================================ */
+.terminal-panel {
+  flex-shrink: 0;            /* NEVER collapse */
+  height: 28%;               /* default height */
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-terminal);
+  border-top: 1px solid var(--border);
+}
+.terminal-topbar {
+  flex-shrink: 0;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.term-tab {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--text-dim);
+  padding: 0 4px 2px;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.term-tab:hover { color: var(--text); }
+.term-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+
+
+.status-badge {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #555;
+  transition: background 0.3s;
+}
+.status-dot.loading { background: #f59e0b; animation: blink 1.4s infinite; }
+.status-dot.ready   { background: #10b981; }
+.status-dot.running { background: var(--accent); animation: blink 0.9s infinite; }
+.status-dot.error   { background: #f48771; }
+.status-text { font-size: 11px; color: var(--text-dim); }
+
+.clear-btn {
+  margin-left: 12px;
+  background: none;
+  border: 1px solid var(--border-drag);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 3px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.clear-btn:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+  background: var(--hover);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: .5; }
+  50%       { opacity: 1; }
+}
+
+.terminal-output {
+  flex: 1;
+  padding: 8px 16px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+.terminal-output span      { white-space: pre-wrap; }
+.terminal-output .out      { color: #d4d4d4; }
+.terminal-output .err,
+.terminal-output .errblock { color: #f48771; }
+.terminal-output .sys      { color: #858585; font-style: italic; }
+
+
+/* ── Inline terminal input (shown when Python calls input()) ── */
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  min-height: 1.5em;
+}
+.terminal-input-row span {
+  flex-shrink: 0;
+}
+
+/* The <input> blends seamlessly into the terminal text */
+.terminal-inline-input {
+  background:   transparent;
+  border:       none;
+  outline:      none;
+  color:        #d4d4d4;
+  caret-color:  #ffffff;
+  font-family:  'Consolas', 'Courier New', monospace;
+  font-size:    13px;
+  line-height:  1.5;
+  flex:         1;
+  min-width:    0;
+  padding:      0;
+  margin:       0;
+}
+.terminal-inline-input:focus { outline: none; }
+body.light .terminal-inline-input { color: #1a1a1a; caret-color: #000; }
+
+/* ============================================================
+   Shared Icon Button
+   ============================================================ */
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.icon-btn:hover    { background: var(--hover); }
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+.icon-btn.hidden   { display: none !important; }
+
+/* ── Action Buttons (Run / Stop) with text ── */
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.action-btn:active { transform: scale(.96); }
+.action-btn:disabled { opacity: 0.4; cursor: default; }
+.action-btn.hidden { display: none !important; }
+
+.run-btn  { background: #1a7a3a; color: #c8f0d4; }
+.run-btn:hover  { background: #1f8f44; }
+
+.stop-btn { background: #7a2020; color: #f8c8c8; }
+.stop-btn:hover { background: #963030; }
+
+/* ============================================================
+   Toasts
+   ============================================================ */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 9999;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: var(--bg-sidebar);
+  color: var(--text);
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  font-size: 13px;
+  animation: slideIn .25s ease;
+  border-radius: 2px;
+}
+@keyframes slideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code to Career Challenge - Brototype</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/darcula.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+</head>
+
+<body>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="app-shell">
+
+    <!-- Title Bar -->
+    <div class="titlebar">
+      <div class="titlebar-left">
+        <a href="https://www.brototype.com/?ref=codetocareer-python-compiler" target="_blank" rel="noopener noreferrer"
+          style="display: flex; align-items: center;">
+          <img
+            src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
+            height="20" alt="Brototype">
+        </a>
+      </div>
+      <span class="titlebar-title">Code to Career Challenge — Python Compiler</span>
+      <div class="titlebar-right">
+        <button id="themeToggleBtn" class="icon-btn" title="Toggle Theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Workspace -->
+    <div class="workspace">
+
+      <!-- Activity Bar -->
+      <div class="activity-bar">
+        <div class="action-item active" title="Explorer">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-title">EXPLORER</div>
+        <div class="section-header">
+          <span class="section-label">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+            </svg>
+            CHALLENGE FILES
+          </span>
+          <button id="newFileBtn" class="icon-btn" title="New File (.py)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+          </button>
+        </div>
+        <div class="file-list" id="sidebarFileList"></div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+
+        <!-- Tabs + Toolbar -->
+        <div class="tabs-bar">
+          <div id="editorTabsContainer" class="tabs-list"></div>
+          <div class="toolbar">
+            <span id="saveStatus" class="save-label">Auto-saved</span>
+            <button id="runCodeBtn" class="action-btn run-btn" title="Run">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              Run
+            </button>
+            <button id="stopCodeBtn" class="action-btn stop-btn hidden" title="Stop">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                <path d="M6 6h12v12H6z" />
+              </svg>
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <!-- Code Editor -->
+        <div class="editor-wrap">
+          <textarea id="codeEditor"></textarea>
+        </div>
+
+        <!-- Drag Handle -->
+        <div class="drag-handle" id="terminalResizer"></div>
+
+        <!-- Terminal Panel -->
+        <div class="terminal-panel" id="terminalArea">
+
+          <!-- Top bar -->
+          <div class="terminal-topbar">
+            <span class="term-tab active">TERMINAL</span>
+            <div class="status-badge">
+              <div class="status-dot" id="consoleStatusDot"></div>
+              <span id="statusLabel" class="status-text">Initializing...</span>
+            </div>
+            <button id="clearOutputBtn" class="clear-btn" title="Clear output">Clear</button>
+          </div>
+
+          <!-- Scrollable output -->
+          <div class="terminal-output" id="consoleOutput">
+            <span class="sys">Loading Python runtime...</span>
+          </div>
+
+        </div><!-- /terminal-panel -->
+
+      </div><!-- /main-content -->
+    </div><!-- /workspace -->
+  </div><!-- /app-shell -->
+
+  <script src="app.js"></script>
+</body>
+
+</html>
