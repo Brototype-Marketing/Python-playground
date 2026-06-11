@@ -124,16 +124,24 @@ html, body {
   align-items: center;
   justify-content: center;
   position: relative;
-  background: var(--bg-bar);
-  border-bottom: 1px solid var(--border);
+  background: #333333; /* always dark */
+  border-bottom: 1px solid #1a1a1a;
   transition: background 0.25s;
 }
 .titlebar-left  { position: absolute; left: 15px; display: flex; align-items: center; }
 .titlebar-right { position: absolute; right: 12px; display: flex; align-items: center; }
-.titlebar-title { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.titlebar-title { font-size: 13px; font-weight: 500; color: #cccccc; white-space: nowrap; }
+
+.titlebar .icon-btn {
+  color: #ffffff !important;
+}
+.titlebar .icon-btn:hover {
+  background: #2a2d2e !important;
+}
 
 .desktop-logo { display: flex; align-items: center; }
 .mobile-logo  { display: none; }
+
 
 /* ============================================================
    Workspace — row (activity bar | sidebar | main)
@@ -566,7 +574,7 @@ body.light .terminal-inline-input { color: #1a1a1a; caret-color: #000; }
     transform: none !important;
     font-size: 10.5px !important;
     font-weight: 600 !important;
-    color: var(--text-dim) !important;
+    color: #858585 !important; /* light gray text for dark background */
     max-width: 95% !important;
     overflow: visible !important;
     text-overflow: clip !important;
