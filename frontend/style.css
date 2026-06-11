@@ -1203,3 +1203,12 @@ body.light #playgroundView .terminal-inline-input { color: #1a1a1a; caret-color:
   }
 }
 
+/* Sidebar toggle styles for desktop */
+#sidebarToggleBtn {
+  margin-right: 12px;
+}
+.sidebar.collapsed {
+  display: none !important;
+}
+
+

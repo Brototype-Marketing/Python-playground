@@ -527,13 +527,33 @@ function initMobileNav() {
   // Sidebar slide-out toggle
   if (sidebarBtn && sidebar && overlay) {
     sidebarBtn.addEventListener('click', () => {
-      sidebar.classList.toggle('mobile-open');
-      overlay.classList.toggle('active');
+      if (window.innerWidth > 768) {
+        sidebar.classList.toggle('collapsed');
+        if (editor) {
+          setTimeout(() => editor.refresh(), 50);
+        }
+      } else {
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('active');
+      }
     });
 
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('mobile-open');
       overlay.classList.remove('active');
+    });
+  }
+
+  // Activity Bar Explorer toggle for desktop
+  const explorerTab = document.querySelector('.activity-bar .action-item');
+  if (explorerTab && sidebar) {
+    explorerTab.addEventListener('click', () => {
+      if (window.innerWidth > 768) {
+        sidebar.classList.toggle('collapsed');
+        if (editor) {
+          setTimeout(() => editor.refresh(), 50);
+        }
+      }
     });
   }
 }

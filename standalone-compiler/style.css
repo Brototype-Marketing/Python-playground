@@ -695,3 +695,11 @@ body.light .terminal-inline-input { color: #1a1a1a; caret-color: #000; }
     padding: 8px 12px;
   }
 }
+
+/* Sidebar toggle styles for desktop */
+#sidebarToggleBtn {
+  margin-right: 12px;
+}
+.sidebar.collapsed {
+  display: none !important;
+}
