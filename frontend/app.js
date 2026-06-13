@@ -1,5 +1,7 @@
 // Brototype Python Playground — Main UI & Logic script
-const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://64.227.128.126:40001/';
+
 
 // Global state
 let currentUser = null;
@@ -26,7 +28,7 @@ const isAdminPage = window.location.pathname.includes('admin.html');
 function initPage() {
   initToasts();
   initTheme();
-  
+
   if (isAdminPage) {
     initAdminPage();
   } else {
@@ -53,7 +55,7 @@ function showToast(message, type = 'info') {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.innerText = message;
-  
+
   // Custom styling based on toast type
   if (type === 'success') {
     toast.style.borderLeftColor = 'var(--success-color)';
@@ -62,9 +64,9 @@ function showToast(message, type = 'info') {
   } else if (type === 'warning') {
     toast.style.borderLeftColor = 'var(--warning-color)';
   }
-  
+
   toastContainer.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateY(20px)';
@@ -96,31 +98,31 @@ function initPlaygroundPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const sourceId = urlParams.get('source_id');
   const sourceUrl = urlParams.get('source_url') || window.location.href;
-  
+
   if (sourceId) {
     localStorage.setItem('lead_source_id', sourceId);
   }
   if (sourceUrl) {
     localStorage.setItem('lead_source_url', sourceUrl);
   }
-  
+
   // 2. DOM Elements & Selection
   const signupForm = document.getElementById('signupForm');
   const otpForm = document.getElementById('otpForm');
   const logoutBtn = document.getElementById('logoutBtn');
   const changePhoneBtn = document.getElementById('changePhoneBtn');
   const resendOtpBtn = document.getElementById('resendOtpBtn');
-  
+
   const authToggleBtn = document.getElementById('authToggleBtn');
   const authTogglePrefix = document.getElementById('authTogglePrefix');
   const authTitle = document.getElementById('authTitle');
   const authSubtitle = document.getElementById('authSubtitle');
   const authSubmitText = document.getElementById('authSubmitText');
-  
+
   const nameFieldGroup = document.getElementById('nameFieldGroup');
   const qualificationFieldGroup = document.getElementById('qualificationFieldGroup');
   const consentFieldGroup = document.getElementById('consentFieldGroup');
-  
+
   const fullNameInput = document.getElementById('fullName');
   const qualificationInput = document.getElementById('qualification');
   const consentInput = document.getElementById('marketingConsent');
@@ -160,12 +162,12 @@ function initPlaygroundPage() {
         if (authSubmitText) authSubmitText.innerText = "Send Login Code";
         if (authTogglePrefix) authTogglePrefix.innerText = "Need a new account? ";
         authToggleBtn.innerText = "Sign Up";
-        
+
         if (nameFieldGroup) nameFieldGroup.style.display = 'none';
         if (qualificationFieldGroup) qualificationFieldGroup.style.display = 'none';
         if (consentFieldGroup) consentFieldGroup.style.display = 'none';
         if (marketingFeatures) marketingFeatures.style.display = 'none';
-        
+
         if (fullNameInput) fullNameInput.required = false;
         if (qualificationInput) qualificationInput.required = false;
         if (consentInput) consentInput.required = false;
@@ -175,23 +177,23 @@ function initPlaygroundPage() {
         if (authSubmitText) authSubmitText.innerText = "Send WhatsApp Verification";
         if (authTogglePrefix) authTogglePrefix.innerText = "Already registered? ";
         authToggleBtn.innerText = "Log In";
-        
+
         if (nameFieldGroup) nameFieldGroup.style.display = 'block';
         if (qualificationFieldGroup) qualificationFieldGroup.style.display = 'block';
         if (consentFieldGroup) consentFieldGroup.style.display = 'flex';
         if (marketingFeatures) marketingFeatures.style.display = 'flex';
-        
+
         if (fullNameInput) fullNameInput.required = true;
         if (qualificationInput) qualificationInput.required = true;
         if (consentInput) consentInput.required = true;
       }
     });
   }
-  
+
   // 3. Navigation Check
   currentToken = localStorage.getItem('user_token');
   const storedUser = localStorage.getItem('user_data');
-  
+
   if (currentToken && storedUser) {
     currentUser = JSON.parse(storedUser);
     if (logoutBtn) logoutBtn.style.display = 'block';
@@ -207,29 +209,29 @@ function initPlaygroundPage() {
     if (logoutBtn) logoutBtn.style.display = 'none';
     switchView('signupView');
   }
-  
+
   // 4. Form Submissions
   // A. Signup/Login Submit
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     if (!iti) return;
-    
+
     if (!iti.isValidNumber()) {
       showToast("Please enter a valid WhatsApp phone number.", "error");
       return;
     }
-    
+
     const phoneE164 = iti.getNumber();
-    
+
     localStorage.setItem('pending_signup_phone', phoneE164);
     localStorage.setItem('pending_is_login_mode', isLoginMode ? 'true' : 'false');
-    
+
     if (!isLoginMode) {
       const name = fullNameInput.value.trim();
       const qualification = qualificationInput.value;
       const consent = consentInput.checked;
-      
+
       localStorage.setItem('pending_signup_name', name);
       localStorage.setItem('pending_signup_qualification', qualification);
       localStorage.setItem('pending_signup_consent', consent ? 'true' : 'false');
@@ -238,33 +240,33 @@ function initPlaygroundPage() {
       localStorage.removeItem('pending_signup_qualification');
       localStorage.removeItem('pending_signup_consent');
     }
-    
+
     const submitBtn = document.getElementById('signupSubmitBtn');
     submitBtn.disabled = true;
     const originalText = authSubmitText.innerText;
     authSubmitText.innerText = "Sending Code...";
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: phoneE164, isLogin: isLoginMode })
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         showToast("OTP sent to your WhatsApp!", "success");
         document.getElementById('otpSubtitle').innerText = `We sent a 6-digit verification code to ${phoneE164}`;
         switchView('otpView');
         startResendTimer();
-        
+
         // Auto-fill OTP in console for easy mock testing
         if (data.mock_otp) {
           console.log(`[LOCAL DEV] Simulated OTP received: ${data.mock_otp}`);
           showToast(`[Mock OTP Received: ${data.mock_otp}]`, "warning");
         }
-        
+
         // Focus first OTP field
         document.querySelector('.otp-digit').focus();
       } else {
@@ -299,7 +301,7 @@ function initPlaygroundPage() {
         otpDigits[idx + 1].focus();
       }
     });
-    
+
     digitInput.addEventListener('keydown', (e) => {
       if (e.key === 'Backspace' && !e.target.value && idx > 0) {
         otpDigits[idx - 1].focus();
@@ -310,60 +312,60 @@ function initPlaygroundPage() {
   // C. OTP Verification Verify
   otpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     let otp = '';
     otpDigits.forEach(input => otp += input.value);
-    
+
     if (otp.length !== 6) {
       showToast("Please enter a 6-digit OTP code.", "error");
       return;
     }
-    
+
     const phone = localStorage.getItem('pending_signup_phone');
     const isLogin = localStorage.getItem('pending_is_login_mode') === 'true';
-    
+
     let payload = { phone, otp };
-    
+
     if (!isLogin) {
       payload.name = localStorage.getItem('pending_signup_name');
       payload.qualification = localStorage.getItem('pending_signup_qualification');
       payload.consent = localStorage.getItem('pending_signup_consent') === 'true';
     }
-    
+
     const source_id = localStorage.getItem('lead_source_id');
     const source_url = localStorage.getItem('lead_source_url');
     if (source_id) payload.source_id = source_id;
     if (source_url) payload.source_url = source_url;
-    
+
     const verifyBtn = document.getElementById('otpVerifyBtn');
     verifyBtn.disabled = true;
     verifyBtn.innerText = "Verifying...";
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         showToast("Verification successful!", "success");
-        
+
         // Save sessions
         localStorage.setItem('user_token', data.token);
         localStorage.setItem('user_data', JSON.stringify(data.user));
         currentToken = data.token;
         currentUser = data.user;
-        
+
         // Cleanup temp signup state
         localStorage.removeItem('pending_signup_name');
         localStorage.removeItem('pending_signup_phone');
         localStorage.removeItem('pending_signup_qualification');
         localStorage.removeItem('pending_signup_consent');
         localStorage.removeItem('pending_is_login_mode');
-        
+
         if (logoutBtn) logoutBtn.style.display = 'block';
         document.body.classList.add('playground-active');
         switchView('playgroundView');
@@ -398,19 +400,19 @@ function initPlaygroundPage() {
   resendOtpBtn.addEventListener('click', async () => {
     const phone = localStorage.getItem('pending_signup_phone');
     if (!phone) return;
-    
+
     const isLogin = localStorage.getItem('pending_is_login_mode') === 'true';
     resendOtpBtn.disabled = true;
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, isLogin })
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         showToast("New OTP sent successfully!", "success");
         startResendTimer();
@@ -458,9 +460,9 @@ function startResendTimer() {
   const btn = document.getElementById('resendOtpBtn');
   btn.disabled = true;
   let seconds = 30;
-  
+
   if (resendTimerInterval) clearInterval(resendTimerInterval);
-  
+
   resendTimerInterval = setInterval(() => {
     seconds--;
     if (seconds <= 0) {
@@ -496,7 +498,7 @@ function initTheme() {
   if (buttons.length === 0) return;
 
   const moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>';
-  const sunPath  = `<circle cx="12" cy="12" r="5" fill="currentColor"/>
+  const sunPath = `<circle cx="12" cy="12" r="5" fill="currentColor"/>
     <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -544,9 +546,9 @@ function initTheme() {
 function initWorker() {
   if (worker) return;
 
-  const out    = document.getElementById('consoleOutput');
-  const dot    = document.getElementById('consoleStatusDot');
-  const label  = document.getElementById('statusLabel');
+  const out = document.getElementById('consoleOutput');
+  const dot = document.getElementById('consoleStatusDot');
+  const label = document.getElementById('statusLabel');
   const runBtn = document.getElementById('runCodeBtn');
   const stpBtn = document.getElementById('stopCodeBtn');
   const isRestart = _uiBound;
@@ -588,7 +590,7 @@ function initWorker() {
         if (out) {
           if (out.children.length > 0) {
             const d = document.createElement('span');
-            d.className   = 'sys';
+            d.className = 'sys';
             d.textContent = '\n─── Run ─────────────>\n';
             out.appendChild(d);
           }
@@ -600,7 +602,7 @@ function initWorker() {
       case 'stdout': {
         if (out) {
           const s = document.createElement('span');
-          s.className   = 'out';
+          s.className = 'out';
           s.textContent = content;
           out.appendChild(s);
           out.scrollTop = out.scrollHeight;
@@ -611,7 +613,7 @@ function initWorker() {
       case 'stderr': {
         if (out) {
           const s = document.createElement('span');
-          s.className   = 'err';
+          s.className = 'err';
           s.textContent = content;
           out.appendChild(s);
           out.scrollTop = out.scrollHeight;
@@ -622,7 +624,7 @@ function initWorker() {
       case 'error': {
         if (out) {
           const s = document.createElement('span');
-          s.className   = 'errblock';
+          s.className = 'errblock';
           s.textContent = '\n' + content;
           out.appendChild(s);
           out.scrollTop = out.scrollHeight;
@@ -656,7 +658,7 @@ function initWorker() {
         worker.terminate();
         worker = null;
 
-        fetch('clear-stdin').catch(() => {});
+        fetch('clear-stdin').catch(() => { });
         if (out) {
           out.querySelectorAll('.terminal-inline-input').forEach(el => {
             el.disabled = true;
@@ -665,7 +667,7 @@ function initWorker() {
           });
 
           const s = document.createElement('span');
-          s.className   = 'errblock';
+          s.className = 'errblock';
           s.textContent = '\n[Stopped by user]';
           out.appendChild(s);
           out.scrollTop = out.scrollHeight;
@@ -683,11 +685,11 @@ function initWorker() {
         if (isRunning || !editor) return;
         const f = activeFile();
         const code = f ? f.content.trim() : editor.getValue().trim();
-        if (!code)   { showToast('Write some code first!', 'warning'); return; }
-        if (!worker) { showToast('Worker not ready yet',   'error');   return; }
+        if (!code) { showToast('Write some code first!', 'warning'); return; }
+        if (!worker) { showToast('Worker not ready yet', 'error'); return; }
 
         if (out) out.innerHTML = '';
-        fetch('clear-stdin').catch(() => {});
+        fetch('clear-stdin').catch(() => { });
 
         worker.postMessage({ type: 'run', code });
 
@@ -776,7 +778,7 @@ function initFiles() {
     files.push({ id: uid(), name: 'main.py', content: DEFAULT_TEMPLATE });
 
   const savedId = localStorage.getItem('ctc_active');
-  activeFileId  = (savedId && files.find(f => f.id === savedId)) ? savedId : files[0].id;
+  activeFileId = (savedId && files.find(f => f.id === savedId)) ? savedId : files[0].id;
 
   const newFileBtn = document.getElementById('newFileBtn');
   if (newFileBtn) {
@@ -786,7 +788,7 @@ function initFiles() {
 }
 
 function persist() {
-  localStorage.setItem('ctc_files',  JSON.stringify(files));
+  localStorage.setItem('ctc_files', JSON.stringify(files));
   localStorage.setItem('ctc_active', activeFileId);
 }
 
@@ -849,10 +851,10 @@ function saveContent(content) {
 
 function renderFiles() {
   const sidebar = document.getElementById('sidebarFileList');
-  const tabs    = document.getElementById('editorTabsContainer');
+  const tabs = document.getElementById('editorTabsContainer');
   if (!sidebar || !tabs) return;
   sidebar.innerHTML = '';
-  tabs.innerHTML    = '';
+  tabs.innerHTML = '';
 
   files.forEach(f => {
     const active = f.id === activeFileId;
@@ -902,8 +904,8 @@ function initEditor() {
 // Terminal Resizer
 // --------------------------------------------------------------------------
 function initResizer() {
-  const handle    = document.getElementById('terminalResizer');
-  const terminal  = document.getElementById('terminalArea');
+  const handle = document.getElementById('terminalResizer');
+  const terminal = document.getElementById('terminalArea');
   const workspace = document.querySelector('.main-content');
   if (!handle || !terminal || !workspace) return;
 
@@ -913,13 +915,13 @@ function initResizer() {
     dragging = true; e.preventDefault();
     handle.classList.add('dragging');
     document.body.style.cursor = document.body.style.userSelect = '';
-    document.body.style.cursor    = 'ns-resize';
+    document.body.style.cursor = 'ns-resize';
     document.body.style.userSelect = 'none';
   });
 
   document.addEventListener('mousemove', e => {
     if (!dragging) return;
-    const box  = workspace.getBoundingClientRect();
+    const box = workspace.getBoundingClientRect();
     const newH = Math.round(box.bottom - e.clientY);
     if (newH >= 120 && newH <= box.height * 0.75)
       terminal.style.height = `${newH}px`;
@@ -1006,9 +1008,9 @@ function initAdminPage() {
   const adminLoginForm = document.getElementById('adminLoginForm');
   const adminLogoutBtn = document.getElementById('adminLogoutBtn');
   const header = document.querySelector('header');
-  
+
   adminToken = localStorage.getItem('admin_token');
-  
+
   if (adminToken) {
     if (header) header.style.display = 'flex';
     adminLogoutBtn.style.display = 'block';
@@ -1021,27 +1023,27 @@ function initAdminPage() {
     adminLogoutBtn.style.display = 'none';
     switchView('adminLoginView');
   }
-  
+
   // Admin Login Form
   adminLoginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const email = document.getElementById('adminEmail').value.trim();
     const password = document.getElementById('adminPassword').value;
-    
+
     const submitBtn = document.getElementById('adminLoginSubmitBtn');
     submitBtn.disabled = true;
     submitBtn.innerText = "Entering...";
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         showToast("Welcome to Admin Console!", "success");
         localStorage.setItem('admin_token', data.token);
@@ -1073,13 +1075,13 @@ function initAdminPage() {
     switchView('adminLoginView');
     showToast("Admin logged out.", "info");
   });
-  
+
   // Apply Filter Button Click
   document.getElementById('applyFiltersBtn').onclick = () => {
     leadsCurrentPage = 1;
     loadAdminLeads();
   };
-  
+
   // Clear Filter Button Click
   document.getElementById('resetFiltersBtn').onclick = () => {
     document.getElementById('searchFilter').value = '';
@@ -1089,7 +1091,7 @@ function initAdminPage() {
     leadsCurrentPage = 1;
     loadAdminLeads();
   };
-  
+
   // Leads pagination controls
   document.getElementById('prevPageBtn').onclick = () => {
     if (leadsCurrentPage > 1) {
@@ -1103,27 +1105,27 @@ function initAdminPage() {
       loadAdminLeads();
     }
   };
-  
+
   // Export CSV
   document.getElementById('exportCsvBtn').onclick = async () => {
     const search = document.getElementById('searchFilter').value;
     const qualification = document.getElementById('qualificationFilter').value;
     const country = document.getElementById('countryFilter').value;
     const source_id = document.getElementById('sourceFilter').value;
-    
+
     const params = new URLSearchParams({ search, qualification, country, source_id });
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/leads/export?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
-      
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `leads_export_${new Date().toISOString().slice(0,10)}.csv`;
+        a.download = `leads_export_${new Date().toISOString().slice(0, 10)}.csv`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -1142,12 +1144,12 @@ async function loadAdminAnalytics() {
     const response = await fetch(`${API_BASE_URL}/api/admin/analytics`, {
       headers: { 'Authorization': `Bearer ${adminToken}` }
     });
-    
+
     const data = await response.json();
-    
+
     if (response.ok) {
       const { totalSignups, otpCompletionRate, crmQueue } = data.analytics;
-      
+
       document.getElementById('statTotalLeads').innerText = totalSignups;
       document.getElementById('statOtpRate').innerText = `${otpCompletionRate}%`;
       document.getElementById('statCrmSuccess').innerText = crmQueue.succeeded;
@@ -1163,7 +1165,7 @@ async function loadAdminLeads() {
   const qualification = document.getElementById('qualificationFilter').value;
   const country = document.getElementById('countryFilter').value;
   const source_id = document.getElementById('sourceFilter').value;
-  
+
   const params = new URLSearchParams({
     search,
     qualification,
@@ -1172,27 +1174,27 @@ async function loadAdminLeads() {
     page: leadsCurrentPage,
     limit: 10
   });
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/admin/leads?${params.toString()}`, {
       headers: { 'Authorization': `Bearer ${adminToken}` }
     });
-    
+
     const data = await response.json();
-    
+
     if (response.ok) {
       const tableBody = document.getElementById('leadsTableBody');
       tableBody.innerHTML = '';
-      
+
       const leads = data.leads;
-      
+
       if (leads.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No matching leads found.</td></tr>`;
       } else {
         leads.forEach(lead => {
           const tr = document.createElement('tr');
           const dateStr = new Date(lead.created_at).toLocaleString();
-          
+
           tr.innerHTML = `
             <td><strong>${escapeHtml(lead.name)}</strong></td>
             <td>${escapeHtml(lead.phone_e164)}</td>
@@ -1204,12 +1206,12 @@ async function loadAdminLeads() {
           tableBody.appendChild(tr);
         });
       }
-      
+
       // Update pagination
       const pageInfo = data.pagination;
       leadsCurrentPage = pageInfo.page;
       leadsTotalPages = pageInfo.pages;
-      
+
       document.getElementById('paginationInfo').innerText = `Showing page ${leadsCurrentPage} of ${leadsTotalPages || 1}`;
       document.getElementById('prevPageBtn').disabled = leadsCurrentPage <= 1;
       document.getElementById('nextPageBtn').disabled = leadsCurrentPage >= leadsTotalPages;
@@ -1224,15 +1226,15 @@ async function loadAdminQueue() {
     const response = await fetch(`${API_BASE_URL}/api/admin/crm/queue`, {
       headers: { 'Authorization': `Bearer ${adminToken}` }
     });
-    
+
     const data = await response.json();
-    
+
     if (response.ok) {
       const tableBody = document.getElementById('crmQueueTableBody');
       tableBody.innerHTML = '';
-      
+
       const queue = data.queue;
-      
+
       if (queue.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No failed items currently in CRM queue.</td></tr>`;
       } else {
@@ -1240,7 +1242,7 @@ async function loadAdminQueue() {
           const tr = document.createElement('tr');
           const nextRetry = item.next_retry_at ? new Date(item.next_retry_at).toLocaleString() : 'N/A';
           const payload = item.payload;
-          
+
           tr.innerHTML = `
             <td>
               <strong>${escapeHtml(payload.name)}</strong><br>
@@ -1267,7 +1269,7 @@ async function loadAdminQueue() {
 
 async function retryCrmPush(userId) {
   showToast("Triggering manual CRM push...", "info");
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/admin/crm/retry`, {
       method: 'POST',
@@ -1277,15 +1279,15 @@ async function retryCrmPush(userId) {
       },
       body: JSON.stringify({ userId })
     });
-    
+
     const data = await response.json();
-    
+
     if (response.ok) {
       showToast("CRM push retry successful!", "success");
     } else {
       showToast(data.error || "Push failed again.", "error");
     }
-    
+
     // Refresh admin tables/metrics
     loadAdminAnalytics();
     loadAdminQueue();
@@ -1300,8 +1302,8 @@ async function retryCrmPush(userId) {
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
