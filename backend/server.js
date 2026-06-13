@@ -177,6 +177,27 @@ app.post('/api/auth/send-otp', async (req, res) => {
   const phoneE164 = parsedPhone.format('E.164');
 
   try {
+    // Check if user already exists or doesn't exist depending on isLogin mode
+    const { isLogin } = req.body;
+    if (isLogin !== undefined) {
+      const usersCollection = req.db.collection('users');
+      const existingUser = await usersCollection.findOne({ phone_e164: phoneE164 });
+
+      if (isLogin === false && existingUser) {
+        return res.status(400).json({
+          error: "This phone number is already registered. Please log in instead.",
+          userExists: true
+        });
+      }
+
+      if (isLogin === true && !existingUser) {
+        return res.status(400).json({
+          error: "Account not found. Please sign up first.",
+          userNotFound: true
+        });
+      }
+    }
+
     // Check Rate Limiting
     const rateCheck = await checkOtpRateLimit(req, phoneE164);
     if (rateCheck.limited) {

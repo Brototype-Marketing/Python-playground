@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Code to Career Challenge - Brototype</title>
+  <!-- intl-tel-input for international country codes and flags selection -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
   <link rel="stylesheet" href="style.css">
   
   <!-- CodeMirror for Python Syntax Highlighting and Code Editing -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 </head>
@@ -17,23 +21,16 @@
   <!-- Floating Toast Notifications -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <header>
-    <div class="logo-container">
-      <a href="https://www.brototype.com/ref=codetocareer-compailer" target="_blank" rel="noopener noreferrer"
-          style="display: flex; align-items: center;">
-          <img
-            src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg"
-            height="20" alt="Brototype">
-        </a>
-    </div>
-  </header>
+
 
   <main>
     <!-- VIEW 1: Signup / Lead Generation Form -->
     <section class="view active" id="signupView">
       <div class="card">
-        <h2 class="card-title" id="authTitle">Code to Career Challenge</h2>
-        <p class="card-subtitle" id="authSubtitle">Unlock the Python Playground & test your coding aptitude</p>
+        <div class="card-logo">
+          <img src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
+        </div>
+        <h2 class="card-title" id="authTitle">Code to Career</h2>        
         
         <form id="signupForm">
           <div class="form-group" id="nameFieldGroup">
@@ -43,23 +40,7 @@
           
           <div class="form-group">
             <label for="phoneNumber">WhatsApp Number</label>
-            <div class="phone-grid">
-              <select id="countryCode">
-                <option value="+91" selected>IN (+91)</option>
-                <option value="+971">AE (+971)</option>
-                <option value="+1">US (+1)</option>
-                <option value="+44">GB (+44)</option>
-                <option value="+966">SA (+966)</option>
-                <option value="+968">OM (+968)</option>
-                <option value="+974">QA (+974)</option>
-                <option value="+965">KW (+965)</option>
-                <option value="+973">BH (+973)</option>
-                <option value="+94">LK (+94)</option>
-                <option value="+977">NP (+977)</option>
-                <option value="+960">MV (+960)</option>
-              </select>
-              <input type="tel" id="phoneNumber" placeholder="98765 43210" required>
-            </div>
+            <input type="tel" id="phoneNumber" placeholder="98765 43210" required>
           </div>
           
           <div class="form-group" id="qualificationFieldGroup">
@@ -80,7 +61,7 @@
           <label class="consent-container" id="consentFieldGroup">
             <input type="checkbox" id="marketingConsent" required checked>
             <span class="consent-text">
-              I consent to receive WhatsApp messages and career guidance updates from Brototype. I understand I can opt-out at any time.
+              I agree to receive career updates and guidance via WhatsApp.
             </span>
           </label>
           
@@ -99,8 +80,18 @@
     <!-- VIEW 2: OTP Verification Screen -->
     <section class="view" id="otpView">
       <div class="card">
+        <div class="card-logo">
+          <img src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
+        </div>
         <h2 class="card-title">Verify Your WhatsApp</h2>
         <p class="card-subtitle" id="otpSubtitle">We sent a 6-digit code to +91 98765 43210</p>
+        
+        <div class="secure-badge">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+          </svg>
+          Secure verification code
+        </div>
         
         <form id="otpForm">
           <div class="otp-container">
@@ -158,7 +149,7 @@
           </div>
 
           <div class="titlebar-right">
-            <button id="themeToggleBtn" class="icon-btn" title="Toggle Theme">
+            <button id="themeToggleBtn" class="icon-btn theme-toggle-btn" title="Toggle Theme">
               <svg id="themeIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>

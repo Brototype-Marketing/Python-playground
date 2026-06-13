@@ -34,3 +34,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.swp
+
+#Development files
+Design System.md

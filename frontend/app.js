@@ -4,6 +4,7 @@ const API_BASE_URL = 'http://localhost:3000';
 // Global state
 let currentUser = null;
 let currentToken = null;
+let iti = null;
 let currentLessons = [];
 let selectedLesson = null;
 let editor = null;
@@ -22,15 +23,22 @@ let leadsTotalPages = 1;
 // Determine if we are on the Admin portal or the Playground
 const isAdminPage = window.location.pathname.includes('admin.html');
 
-document.addEventListener('DOMContentLoaded', () => {
+function initPage() {
   initToasts();
+  initTheme();
   
   if (isAdminPage) {
     initAdminPage();
   } else {
     initPlaygroundPage();
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPage);
+} else {
+  initPage();
+}
 
 // --------------------------------------------------------------------------
 // Toast Notification Utility
@@ -117,40 +125,68 @@ function initPlaygroundPage() {
   const qualificationInput = document.getElementById('qualification');
   const consentInput = document.getElementById('marketingConsent');
 
-  let isLoginMode = false;
-  
-  authToggleBtn.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    if (isLoginMode) {
-      authTitle.innerText = "Welcome Back";
-      authSubtitle.innerText = "Log in with your registered phone number to verify";
-      authSubmitText.innerText = "Send Login Code";
-      authTogglePrefix.innerText = "Need a new account? ";
-      authToggleBtn.innerText = "Sign Up";
-      
-      nameFieldGroup.style.display = 'none';
-      qualificationFieldGroup.style.display = 'none';
-      consentFieldGroup.style.display = 'none';
-      
-      fullNameInput.required = false;
-      qualificationInput.required = false;
-      consentInput.required = false;
+  try {
+    const phoneInputEl = document.getElementById('phoneNumber');
+    if (phoneInputEl) {
+      if (typeof window.intlTelInput !== 'function') {
+        throw new Error("window.intlTelInput is not loaded yet or is not a function.");
+      }
+      iti = window.intlTelInput(phoneInputEl, {
+        initialCountry: "in",
+        separateDialCode: true,
+        dropdownParent: document.body,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      });
+      console.log("[INTL-TEL-INPUT] Initialized successfully:", iti);
     } else {
-      authTitle.innerText = "Code to Career Challenge";
-      authSubtitle.innerText = "Unlock the Python Playground & test your coding aptitude";
-      authSubmitText.innerText = "Send WhatsApp Verification";
-      authTogglePrefix.innerText = "Already registered? ";
-      authToggleBtn.innerText = "Log In";
-      
-      nameFieldGroup.style.display = 'block';
-      qualificationFieldGroup.style.display = 'block';
-      consentFieldGroup.style.display = 'flex';
-      
-      fullNameInput.required = true;
-      qualificationInput.required = true;
-      consentInput.required = true;
+      console.warn("[INTL-TEL-INPUT] Input element #phoneNumber not found.");
     }
-  });
+  } catch (err) {
+    console.error("[INTL-TEL-INPUT] Initialization error:", err);
+    setTimeout(() => {
+      showToast("WhatsApp input initialization error: " + err.message, "error");
+    }, 800);
+  }
+
+  let isLoginMode = false;
+
+  if (authToggleBtn) {
+    authToggleBtn.addEventListener('click', () => {
+      isLoginMode = !isLoginMode;
+      const marketingFeatures = document.getElementById('marketingFeatures');
+      if (isLoginMode) {
+        if (authTitle) authTitle.innerText = "Welcome Back";
+        if (authSubtitle) authSubtitle.innerText = "Log in with your registered phone number to verify";
+        if (authSubmitText) authSubmitText.innerText = "Send Login Code";
+        if (authTogglePrefix) authTogglePrefix.innerText = "Need a new account? ";
+        authToggleBtn.innerText = "Sign Up";
+        
+        if (nameFieldGroup) nameFieldGroup.style.display = 'none';
+        if (qualificationFieldGroup) qualificationFieldGroup.style.display = 'none';
+        if (consentFieldGroup) consentFieldGroup.style.display = 'none';
+        if (marketingFeatures) marketingFeatures.style.display = 'none';
+        
+        if (fullNameInput) fullNameInput.required = false;
+        if (qualificationInput) qualificationInput.required = false;
+        if (consentInput) consentInput.required = false;
+      } else {
+        if (authTitle) authTitle.innerText = "Code to Career Challenge";
+        if (authSubtitle) authSubtitle.innerText = "Unlock the Python Playground & test your coding aptitude";
+        if (authSubmitText) authSubmitText.innerText = "Send WhatsApp Verification";
+        if (authTogglePrefix) authTogglePrefix.innerText = "Already registered? ";
+        authToggleBtn.innerText = "Log In";
+        
+        if (nameFieldGroup) nameFieldGroup.style.display = 'block';
+        if (qualificationFieldGroup) qualificationFieldGroup.style.display = 'block';
+        if (consentFieldGroup) consentFieldGroup.style.display = 'flex';
+        if (marketingFeatures) marketingFeatures.style.display = 'flex';
+        
+        if (fullNameInput) fullNameInput.required = true;
+        if (qualificationInput) qualificationInput.required = true;
+        if (consentInput) consentInput.required = true;
+      }
+    });
+  }
   
   // 3. Navigation Check
   currentToken = localStorage.getItem('user_token');
@@ -162,7 +198,6 @@ function initPlaygroundPage() {
     document.body.classList.add('playground-active');
     switchView('playgroundView');
     initServiceWorker();
-    initTheme();
     initFiles();
     initEditor();
     initWorker();
@@ -177,9 +212,15 @@ function initPlaygroundPage() {
   // A. Signup/Login Submit
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const countryCode = document.getElementById('countryCode').value;
-    const phoneInput = document.getElementById('phoneNumber').value.trim();
-    const phoneE164 = countryCode + phoneInput.replace(/\s+/g, '');
+    
+    if (!iti) return;
+    
+    if (!iti.isValidNumber()) {
+      showToast("Please enter a valid WhatsApp phone number.", "error");
+      return;
+    }
+    
+    const phoneE164 = iti.getNumber();
     
     localStorage.setItem('pending_signup_phone', phoneE164);
     localStorage.setItem('pending_is_login_mode', isLoginMode ? 'true' : 'false');
@@ -207,7 +248,7 @@ function initPlaygroundPage() {
       const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneE164 })
+        body: JSON.stringify({ phone: phoneE164, isLogin: isLoginMode })
       });
       
       const data = await response.json();
@@ -228,6 +269,17 @@ function initPlaygroundPage() {
         document.querySelector('.otp-digit').focus();
       } else {
         showToast(data.error || "Failed to transmit OTP.", "error");
+        if (data.userExists && !isLoginMode) {
+          setTimeout(() => {
+            showToast("Switching to Log In mode...", "info");
+            if (authToggleBtn) authToggleBtn.click();
+          }, 1500);
+        } else if (data.userNotFound && isLoginMode) {
+          setTimeout(() => {
+            showToast("Switching to Sign Up mode...", "info");
+            if (authToggleBtn) authToggleBtn.click();
+          }, 1500);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -316,7 +368,6 @@ function initPlaygroundPage() {
         document.body.classList.add('playground-active');
         switchView('playgroundView');
         initServiceWorker();
-        initTheme();
         initFiles();
         initEditor();
         initWorker();
@@ -348,13 +399,14 @@ function initPlaygroundPage() {
     const phone = localStorage.getItem('pending_signup_phone');
     if (!phone) return;
     
+    const isLogin = localStorage.getItem('pending_is_login_mode') === 'true';
     resendOtpBtn.disabled = true;
     
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone })
+        body: JSON.stringify({ phone, isLogin })
       });
       
       const data = await response.json();
@@ -440,9 +492,8 @@ function initServiceWorker() {
 // Theme Toggle
 // --------------------------------------------------------------------------
 function initTheme() {
-  const btn  = document.getElementById('themeToggleBtn');
-  const icon = document.getElementById('themeIcon');
-  if (!btn) return;
+  const buttons = document.querySelectorAll('.theme-toggle-btn, #themeToggleBtn');
+  if (buttons.length === 0) return;
 
   const moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="currentColor"/>';
   const sunPath  = `<circle cx="12" cy="12" r="5" fill="currentColor"/>
@@ -455,19 +506,36 @@ function initTheme() {
     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>`;
 
-  // Detect system color scheme preference
-  let light = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  // Detect system color scheme preference or use saved preference
+  let savedTheme = localStorage.getItem('theme');
+  let light;
+  if (savedTheme) {
+    light = savedTheme === 'light';
+  } else {
+    light = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  }
 
-  // Set initial theme
-  document.body.classList.toggle('light', light);
-  if (icon) icon.innerHTML = light ? sunPath : moonPath;
-
-  btn.onclick = () => {
-    light = !light;
+  const updateTheme = () => {
     document.body.classList.toggle('light', light);
-    if (icon) icon.innerHTML = light ? sunPath : moonPath;
-    if (editor) editor.setOption('theme', light ? 'default' : 'darcula');
+    localStorage.setItem('theme', light ? 'light' : 'dark');
+    buttons.forEach(b => {
+      const icon = b.querySelector('svg');
+      if (icon) icon.innerHTML = light ? sunPath : moonPath;
+    });
+    if (editor) {
+      editor.setOption('theme', light ? 'default' : 'material-darker');
+    }
   };
+
+  updateTheme();
+
+  buttons.forEach(b => {
+    b.onclick = (e) => {
+      e.preventDefault();
+      light = !light;
+      updateTheme();
+    };
+  });
 }
 
 // --------------------------------------------------------------------------
@@ -820,7 +888,7 @@ function initEditor() {
 
   const isLight = document.body.classList.contains('light');
   editor = CodeMirror.fromTextArea(textarea, {
-    mode: 'python', theme: isLight ? 'default' : 'darcula',
+    mode: 'python', theme: isLight ? 'default' : 'material-darker',
     lineNumbers: true, indentUnit: 4, tabSize: 4,
     lineWrapping: false, autofocus: true,
   });
@@ -937,16 +1005,19 @@ function initMobileNav() {
 function initAdminPage() {
   const adminLoginForm = document.getElementById('adminLoginForm');
   const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+  const header = document.querySelector('header');
   
   adminToken = localStorage.getItem('admin_token');
   
   if (adminToken) {
+    if (header) header.style.display = 'flex';
     adminLogoutBtn.style.display = 'block';
     switchView('adminDashboardView');
     loadAdminAnalytics();
     loadAdminLeads();
     loadAdminQueue();
   } else {
+    if (header) header.style.display = 'none';
     adminLogoutBtn.style.display = 'none';
     switchView('adminLoginView');
   }
@@ -975,6 +1046,7 @@ function initAdminPage() {
         showToast("Welcome to Admin Console!", "success");
         localStorage.setItem('admin_token', data.token);
         adminToken = data.token;
+        if (header) header.style.display = 'flex';
         adminLogoutBtn.style.display = 'block';
         switchView('adminDashboardView');
         loadAdminAnalytics();
@@ -996,6 +1068,7 @@ function initAdminPage() {
   adminLogoutBtn.addEventListener('click', () => {
     localStorage.removeItem('admin_token');
     adminToken = null;
+    if (header) header.style.display = 'none';
     adminLogoutBtn.style.display = 'none';
     switchView('adminLoginView');
     showToast("Admin logged out.", "info");
