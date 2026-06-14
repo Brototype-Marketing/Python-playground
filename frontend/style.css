@@ -151,7 +151,8 @@ header {
 }
 
 .logo-container img {
-  height: 100%;
+  height: 28px !important;
+  width: auto;
 }
 
 .nav-buttons {

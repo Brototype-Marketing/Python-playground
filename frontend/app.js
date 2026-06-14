@@ -1,6 +1,6 @@
 // Brototype Python Playground — Main UI & Logic script
 // const API_BASE_URL = 'http://localhost:3000';
-const API_BASE_URL = 'http://64.227.128.126:40001';
+const API_BASE_URL = 'https://ctc.brototype.com';
 
 
 // Global state
