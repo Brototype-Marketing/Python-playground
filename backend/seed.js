@@ -71,8 +71,8 @@ async function seed() {
   const existingAdmin = await adminColl.findOne({ role: 'super_admin' });
   
   if (!existingAdmin) {
-    const defaultEmail = 'admin@brototype.com';
-    const defaultPassword = 'adminpassword123';
+    const defaultEmail = process.env.ADMIN_EMAIL;
+    const defaultPassword = process.env.ADMIN_PASSWORD;
     const hash = await bcrypt.hash(defaultPassword, 10);
     
     await adminColl.insertOne({
