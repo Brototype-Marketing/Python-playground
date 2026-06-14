@@ -1,5 +1,5 @@
 const { MongoClient } = require('mongodb');
-const uri = "mongodb+srv://marketingmanager_db_user:Qc2tIqUwSPS5x6U5@cluster0.0svfmzb.mongodb.net/?appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 async function run() {
   console.log("Connecting to Atlas...");

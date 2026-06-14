@@ -10,19 +10,59 @@ const { pushLead } = require('./crmProvider');
 const { startRetryJob } = require('./cron');
 const seed = require('./seed');
 
+const helmet = require('helmet');
+const compression = require('compression');
+
 require('dotenv').config();
+
+// Validate critical environment variables
+const isProd = process.env.NODE_ENV === 'production';
+const requiredEnv = ['MONGODB_URI', 'SESSION_SIGNING_KEY', 'ADMIN_SESSION_KEY'];
+const missingEnv = requiredEnv.filter(key => !process.env[key]);
+
+if (missingEnv.length > 0) {
+  const errorMsg = `CRITICAL: Missing environment variables: ${missingEnv.join(', ')}`;
+  console.error(errorMsg);
+  if (isProd) {
+    console.error("Server execution halted: Required environment variables are missing in production mode.");
+    process.exit(1);
+  } else {
+    console.warn("WARNING: Missing environment variables in development mode. Please configure them in your .env file.");
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// Mount security headers and compression
+app.use(helmet());
+app.use(compression());
+
+// Strict CORS origins check for production
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : [];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow if no origin (like mobile/curl) or not in production
+    if (!origin || process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  }
+}));
+
 app.use(express.json());
 
 // Session signing keys from environment
-const USER_JWT_SECRET = process.env.SESSION_SIGNING_KEY || 'default_user_secret';
-const ADMIN_JWT_SECRET = process.env.ADMIN_SESSION_KEY || 'default_admin_secret';
-const OTP_TTL = parseInt(process.env.OTP_TTL_SECONDS || '300', 10);
-const OTP_MAX_ATTEMPTS = parseInt(process.env.OTP_MAX_ATTEMPTS || '5', 10);
+const USER_JWT_SECRET = process.env.SESSION_SIGNING_KEY;
+const ADMIN_JWT_SECRET = process.env.ADMIN_SESSION_KEY;
+const OTP_TTL = parseInt(process.env.OTP_TTL_SECONDS, 10);
+const OTP_MAX_ATTEMPTS = parseInt(process.env.OTP_MAX_ATTEMPTS, 10);
 
 // Simple lookup for common countries
 const COUNTRY_MAP = {
@@ -265,7 +305,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
   const phoneE164 = parsedPhone.format('E.164');
 
   try {
-    const isSpecial = (phoneE164 === '+919645198568' && otp === '123456');
+    const isSpecial = (process.env.NODE_ENV !== 'production' && phoneE164 === '+919645198568' && otp === '123456');
 
     if (!isSpecial) {
       const otpCollection = req.db.collection('otp_codes');
@@ -723,6 +763,15 @@ app.post('/api/admin/crm/retry', authenticateAdmin, async (req, res) => {
     console.error("Manual CRM retry error:", error);
     return res.status(500).json({ error: "Manual retry failed: " + error.message });
   }
+});
+
+// Centralized Error Handling Middleware to prevent leaking stack traces
+app.use((err, req, res, next) => {
+  console.error("Centralized Error Catch:", err);
+  const isProduction = process.env.NODE_ENV === 'production';
+  res.status(500).json({
+    error: isProduction ? "An internal server error occurred." : err.message
+  });
 });
 
 // --------------------------------------------------------------------------
