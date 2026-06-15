@@ -528,6 +528,15 @@ function initTheme() {
       const icon = b.querySelector('svg');
       if (icon) icon.innerHTML = light ? sunPath : moonPath;
     });
+
+    // Toggle logo source URLs for dark and light theme
+    const darkLogo = "https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg";
+    const lightLogo = "https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_light_theme.png";
+    const logos = document.querySelectorAll('.theme-logo');
+    logos.forEach(logo => {
+      logo.src = light ? lightLogo : darkLogo;
+    });
+
     if (editor) {
       editor.setOption('theme', light ? 'default' : 'material-darker');
     }
