@@ -340,6 +340,9 @@ input:focus, select:focus {
   gap: 12px;
   margin: 24px 0;
   cursor: pointer;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .consent-container input {
@@ -350,9 +353,10 @@ input:focus, select:focus {
 }
 
 .consent-text {
-  font-size: 12.5px;
+  font-size: 11px;
   color: var(--text-muted);
   line-height: 1.5;
+  font-weight: 400;
 }
 
 /* Action Buttons */
@@ -1916,6 +1920,48 @@ body.light .feature-icon {
 
 body.light .card-window-header {
   border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Center auth cards on mobile (under 768px) and remove vertical page scroll */
+@media (max-width: 768px) {
+  body:not(.playground-active) {
+    overflow: hidden !important;
+  }
+  
+  body:not(.playground-active) main {
+    padding: 0 !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  body:not(.playground-active) .auth-layout {
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px !important;
+  }
+
+  body:not(.playground-active) .auth-form-panel {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  body:not(.playground-active) .card {
+    margin: 0 !important;
+    padding: 24px !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    border-radius: var(--radius-card) !important;
+  }
 }
 
 

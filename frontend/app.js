@@ -161,8 +161,8 @@ function initPlaygroundPage() {
       isLoginMode = !isLoginMode;
       const marketingFeatures = document.getElementById('marketingFeatures');
       if (isLoginMode) {
-        if (authTitle) authTitle.innerText = "Code to Career Challenge";
-        if (authSubtitle) authSubtitle.innerText = "Log in to access the Code Editor and start practicing.";
+        if (authTitle) authTitle.innerText = "Login to Code Editor";
+        if (authSubtitle) authSubtitle.innerText = "Access the Code Editor and start practicing.";
         if (authSubmitText) authSubmitText.innerText = "Send Login Code";
         if (authTogglePrefix) authTogglePrefix.innerText = "Need a new account? ";
         authToggleBtn.innerText = "Sign Up";
@@ -176,8 +176,8 @@ function initPlaygroundPage() {
         if (qualificationInput) qualificationInput.required = false;
         if (consentInput) consentInput.required = false;
       } else {
-        if (authTitle) authTitle.innerText = "Code to Career Challenge";
-        if (authSubtitle) authSubtitle.innerText = "Sign up to access the Code Editor and start practicing.";
+        if (authTitle) authTitle.innerText = "Signup to Code Editor";
+        if (authSubtitle) authSubtitle.innerText = "Access the Code Editor and start practicing.";
         if (authSubmitText) authSubmitText.innerText = "Send WhatsApp Verification";
         if (authTogglePrefix) authTogglePrefix.innerText = "Already registered? ";
         authToggleBtn.innerText = "Log In";
