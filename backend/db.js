@@ -71,6 +71,15 @@ async function ensureIndexes() {
     // 6. progress collection
     await db.collection('progress').createIndex({ user_id: 1, lesson_id: 1 }, { unique: true });
 
+    // 7. otp_requests collection
+    await db.collection('otp_requests').createIndex({ phone: 1 });
+    await db.collection('otp_requests').createIndex({ created_at: -1 });
+
+    // 8. login_logs collection
+    await db.collection('login_logs').createIndex({ user_id: 1 });
+    await db.collection('login_logs').createIndex({ phone: 1 });
+    await db.collection('login_logs').createIndex({ created_at: -1 });
+
     console.log("Database indexes verified and created successfully.");
   } catch (error) {
     console.error("Error creating database indexes:", error);

@@ -157,6 +157,26 @@ async function checkOtpRateLimit(req, phoneE164) {
   return { limited: false };
 }
 
+// Helper: Log OTP Request details
+async function logOtpRequest(req, phone, isLogin, status, errorMessage) {
+  try {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
+    const userAgent = req.headers['user-agent'] || null;
+
+    await req.db.collection('otp_requests').insertOne({
+      phone: phone || null,
+      is_login: isLogin === true,
+      ip_address: ip,
+      user_agent: userAgent,
+      status: status,
+      error_message: errorMessage || null,
+      created_at: new Date()
+    });
+  } catch (error) {
+    console.error("Failed to log OTP request:", error);
+  }
+}
+
 // --------------------------------------------------------------------------
 // Auth Middleware (Users & Admin)
 // --------------------------------------------------------------------------
@@ -211,6 +231,8 @@ app.post('/api/auth/send-otp', async (req, res) => {
   // By default we parse as international or assume default country code if provided.
   const parsedPhone = parsePhoneNumberFromString(phone);
   if (!parsedPhone || !parsedPhone.isValid()) {
+    const { isLogin } = req.body;
+    await logOtpRequest(req, phone, isLogin, 'invalid_format', "Invalid international phone number format.");
     return res.status(400).json({ error: "Invalid international phone number format. Please include country code (e.g. +91...)" });
   }
 
@@ -224,6 +246,7 @@ app.post('/api/auth/send-otp', async (req, res) => {
       const existingUser = await usersCollection.findOne({ phone_e164: phoneE164 });
 
       if (isLogin === false && existingUser) {
+        await logOtpRequest(req, phoneE164, isLogin, 'validation_failed', "This phone number is already registered.");
         return res.status(400).json({
           error: "This phone number is already registered. Please log in instead.",
           userExists: true
@@ -231,6 +254,7 @@ app.post('/api/auth/send-otp', async (req, res) => {
       }
 
       if (isLogin === true && !existingUser) {
+        await logOtpRequest(req, phoneE164, isLogin, 'validation_failed', "Account not found. Please sign up first.");
         return res.status(400).json({
           error: "Account not found. Please sign up first.",
           userNotFound: true
@@ -241,6 +265,7 @@ app.post('/api/auth/send-otp', async (req, res) => {
     // Check Rate Limiting
     const rateCheck = await checkOtpRateLimit(req, phoneE164);
     if (rateCheck.limited) {
+      await logOtpRequest(req, phoneE164, isLogin, 'rate_limited', rateCheck.reason);
       return res.status(429).json({ error: rateCheck.reason });
     }
 
@@ -274,6 +299,7 @@ app.post('/api/auth/send-otp', async (req, res) => {
     const watiResult = await sendOTP(phoneE164, otpCode);
 
     if (watiResult.success) {
+      await logOtpRequest(req, phoneE164, isLogin, 'sent', null);
       // In mock mode, we send the code in response to make it extremely easy to test locally!
       const responsePayload = { message: "OTP sent successfully to WhatsApp." };
       if (process.env.WATI_API_KEY === 'mock') {
@@ -281,11 +307,14 @@ app.post('/api/auth/send-otp', async (req, res) => {
       }
       return res.json(responsePayload);
     } else {
+      await logOtpRequest(req, phoneE164, isLogin, 'provider_failed', watiResult.message || "Failed to send OTP via WhatsApp.");
       return res.status(500).json({ error: watiResult.message || "Failed to send OTP via WhatsApp. Please try again." });
     }
 
   } catch (error) {
     console.error("Error in send-otp route:", error);
+    const { isLogin } = req.body;
+    await logOtpRequest(req, phoneE164 || phone, isLogin, 'server_error', error.message || "Server error during OTP transmission.");
     return res.status(500).json({ error: "Server error during OTP transmission." });
   }
 });
@@ -385,6 +414,16 @@ app.post('/api/auth/verify-otp', async (req, res) => {
       event: 'otp_verified',
       user_id: user._id,
       is_new_user: isNewUser,
+      created_at: new Date()
+    });
+
+    // Log successful login/signup for admin reports and analytics
+    await req.db.collection('login_logs').insertOne({
+      user_id: user._id,
+      phone: phoneE164,
+      is_new_user: isNewUser,
+      ip_address: req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || null,
+      user_agent: req.headers['user-agent'] || null,
       created_at: new Date()
     });
 
