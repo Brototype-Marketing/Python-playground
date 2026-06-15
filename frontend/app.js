@@ -161,8 +161,8 @@ function initPlaygroundPage() {
       isLoginMode = !isLoginMode;
       const marketingFeatures = document.getElementById('marketingFeatures');
       if (isLoginMode) {
-        if (authTitle) authTitle.innerText = "Welcome Back";
-        if (authSubtitle) authSubtitle.innerText = "Log in with your registered phone number to verify";
+        if (authTitle) authTitle.innerText = "Code to Career Challenge";
+        if (authSubtitle) authSubtitle.innerText = "Log in to open the Code Editor and start practicing";
         if (authSubmitText) authSubmitText.innerText = "Send Login Code";
         if (authTogglePrefix) authTogglePrefix.innerText = "Need a new account? ";
         authToggleBtn.innerText = "Sign Up";
@@ -177,7 +177,7 @@ function initPlaygroundPage() {
         if (consentInput) consentInput.required = false;
       } else {
         if (authTitle) authTitle.innerText = "Code to Career Challenge";
-        if (authSubtitle) authSubtitle.innerText = "Unlock the Python Playground & test your coding aptitude";
+        if (authSubtitle) authSubtitle.innerText = "Signup to open the Code Editor and start practicing";
         if (authSubmitText) authSubmitText.innerText = "Send WhatsApp Verification";
         if (authTogglePrefix) authTogglePrefix.innerText = "Already registered? ";
         authToggleBtn.innerText = "Log In";
@@ -531,7 +531,7 @@ function initTheme() {
 
     // Toggle logo source URLs for dark and light theme
     const darkLogo = "https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg";
-    const lightLogo = "https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_light_theme.png";
+    const lightLogo = "https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype-white-theme.svg";
     const logos = document.querySelectorAll('.theme-logo');
     logos.forEach(logo => {
       logo.src = light ? lightLogo : darkLogo;
@@ -593,7 +593,7 @@ function initWorker() {
         break;
 
       case 'ready':
-        if (!isRestart && out) out.innerHTML = '<span class="sys">✓ Python ready — press ▶ Run</span>';
+        if (!isRestart && out) out.innerHTML = '<span class="sys">✓ Editor ready — press ▶ Run</span>';
         setStatus('ready', 'Ready');
         if (runBtn) runBtn.disabled = false;
         setRunning(false);

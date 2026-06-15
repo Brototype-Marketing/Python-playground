@@ -28,96 +28,222 @@
   <main>
     <!-- VIEW 1: Signup / Lead Generation Form -->
     <section class="view active" id="signupView">
-      <div class="card">
-        <div class="card-logo">
-          <img class="theme-logo" src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
-        </div>
-        <h2 class="card-title" id="authTitle">Code to Career</h2>        
-        
-        <form id="signupForm">
-          <div class="form-group" id="nameFieldGroup">
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="Enter your full name" required>
+      <div class="auth-layout">
+        <!-- Visual Panel -->
+        <div class="auth-visual-panel">
+          <div class="visual-header">
+            <span class="visual-badge">Code Playground</span>
+            <h1 class="visual-title">Brototype Playground</h1>
+            <p class="visual-subtitle">Write, compile, and execute code instantly in a web-based IDE.</p>
           </div>
           
-          <div class="form-group">
-            <label for="phoneNumber">WhatsApp Number</label>
-            <input type="tel" id="phoneNumber" placeholder="98765 43210" required>
-          </div>
-          
-          <div class="form-group" id="qualificationFieldGroup">
-            <label for="qualification">Current Qualification</label>
-            <select id="qualification" required>
-              <option value="" disabled selected>Select your qualification</option>
-              <option value="Pursuing Plus Two">Pursuing Plus Two</option>
-              <option value="Plus Two completed">Plus Two completed</option>
-              <option value="Diploma">Diploma</option>
-              <option value="Pursuing Degree">Pursuing Degree</option>
-              <option value="Degree completed">Degree completed</option>
-              <option value="Postgraduate">Postgraduate</option>
-              <option value="Working professional">Working professional</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          
-          <label class="consent-container" id="consentFieldGroup">
-            <input type="checkbox" id="marketingConsent" required checked>
-            <span class="consent-text">
-              I agree to receive career updates and guidance via WhatsApp.
-            </span>
-          </label>
-          
-          <button type="submit" class="btn-primary" id="signupSubmitBtn">
-            <span id="authSubmitText">Send WhatsApp Verification</span>
-          </button>
-        </form>
+          <!-- Modern Code Editor Mockup -->
+          <div class="mock-editor">
+            <div class="editor-header">
+              <div class="window-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="editor-tab active">
+                <svg class="file-icon" viewBox="0 0 24 24" width="12" height="12" fill="#38BDF8" style="vertical-align: middle; margin-right: 4px;">
+                  <path d="M14.4 6L12.8 4H4.8C3.92 4 3.2 4.72 3.2 5.6V18.4C3.2 19.28 3.92 20 4.8 20H19.2C20.08 20 20.8 19.28 20.8 18.4V7.6C20.8 6.72 20.08 6 19.2 6H14.4ZM19.2 18.4H4.8V5.6H12L13.6 7.2H19.2V18.4Z"/>
+                </svg>
+                main.py
+              </div>
+            </div>
+            <div class="editor-content">
+              <div class="line-numbers">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              </div>
+              <pre class="code-lines"><code><span class="keyword">def</span> <span class="function">greet_developer</span>(name):
+    print(<span class="string">f"Welcome to Brototype Playground, {name}!"</span>)
+    <span class="keyword">return</span> <span class="keyword">True</span>
 
-        <p class="resend-text" style="margin-top: 20px;">
-          <span id="authTogglePrefix">Already registered? </span>
-          <button class="resend-link" id="authToggleBtn" type="button">Log In</button>
-        </p>
+greet_developer(<span class="string">"You"</span>)</code></pre>
+            </div>
+            <div class="editor-terminal">
+              <div class="terminal-header">Terminal Output</div>
+              <div class="terminal-content">
+                <span class="terminal-success">✓ Code Playground environment ready.</span>
+                <span class="terminal-text">Welcome to Brototype Playground, You!</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Marketing features list (toggled by app.js) -->
+          <div class="marketing-features" id="marketingFeatures">
+            <div class="feature-card">
+              <div class="feature-icon">🚀</div>
+              <div class="feature-info">
+                <h4 class="feature-title">In-Browser Execution</h4>
+                <p class="feature-desc">Run your scripts instantly in a modern, secure playground environment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side Auth Card -->
+        <div class="auth-form-panel">
+          <div class="card">
+            <!-- IDE Window Styling for Mobile View -->
+            <div class="card-window-header">
+              <div class="window-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="card-window-title">playground_auth.py</div>
+            </div>
+
+            <div class="card-logo">
+              <img class="theme-logo" src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
+            </div>
+            <h2 class="card-title" id="authTitle">Code to Career Challenge</h2>        
+            <p class="card-subtitle" id="authSubtitle" style="margin-bottom: 20px; text-align: center; color: var(--text-muted); font-size: 14px;">Signup to open the Code Editor and start practicing</p>
+            
+            <form id="signupForm">
+              <div class="form-group" id="nameFieldGroup">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="phoneNumber">WhatsApp Number</label>
+                <input type="tel" id="phoneNumber" placeholder="98765 43210" required>
+              </div>
+              
+              <div class="form-group" id="qualificationFieldGroup">
+                <label for="qualification">Current Qualification</label>
+                <select id="qualification" required>
+                  <option value="" disabled selected>Select your qualification</option>
+                  <option value="Pursuing Plus Two">Pursuing Plus Two</option>
+                  <option value="Plus Two completed">Plus Two completed</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Pursuing Degree">Pursuing Degree</option>
+                  <option value="Degree completed">Degree completed</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                  <option value="Working professional">Working professional</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <label class="consent-container" id="consentFieldGroup">
+                <input type="checkbox" id="marketingConsent" required checked>
+                <span class="consent-text">
+                  I agree to receive career updates and guidance via WhatsApp.
+                </span>
+              </label>
+              
+              <button type="submit" class="btn-primary" id="signupSubmitBtn">
+                <span id="authSubmitText">Send WhatsApp Verification</span>
+              </button>
+            </form>
+
+            <p class="resend-text" style="margin-top: 20px;">
+              <span id="authTogglePrefix">Already registered? </span>
+              <button class="resend-link" id="authToggleBtn" type="button">Log In</button>
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- VIEW 2: OTP Verification Screen -->
     <section class="view" id="otpView">
-      <div class="card">
-        <div class="card-logo">
-          <img class="theme-logo" src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
-        </div>
-        <h2 class="card-title">Verify Your WhatsApp</h2>
-        <p class="card-subtitle" id="otpSubtitle">We sent a 6-digit code to +91 98765 43210</p>
-        
-        <div class="secure-badge">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
-            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-          </svg>
-          Secure verification code
-        </div>
-        
-        <form id="otpForm">
-          <div class="otp-container">
-            <input type="number" class="otp-digit" maxlength="1" required data-index="0" autofocus>
-            <input type="number" class="otp-digit" maxlength="1" required data-index="1">
-            <input type="number" class="otp-digit" maxlength="1" required data-index="2">
-            <input type="number" class="otp-digit" maxlength="1" required data-index="3">
-            <input type="number" class="otp-digit" maxlength="1" required data-index="4">
-            <input type="number" class="otp-digit" maxlength="1" required data-index="5">
+      <div class="auth-layout">
+        <!-- Visual Panel -->
+        <div class="auth-visual-panel">
+          <div class="visual-header">
+            <span class="visual-badge">Security Authentication</span>
+            <h1 class="visual-title">Enter Verification Code</h1>
+            <p class="visual-subtitle">To keep your playground environment secure, please verify your credentials using the one-time code sent to your WhatsApp.</p>
           </div>
           
-          <button type="submit" class="btn-primary" id="otpVerifyBtn">
-            <span>Verify & Start Learning</span>
-          </button>
-        </form>
-        
-        <p class="resend-text">
-          Didn't receive the code? 
-          <button class="resend-link" id="resendOtpBtn" disabled>Resend in 30s</button>
-        </p>
-        
-        <p class="resend-text" style="margin-top: 15px;">
-          <a href="#" id="changePhoneBtn" class="resend-link" style="color: var(--text-muted)">Change phone number</a>
-        </p>
+          <!-- Modern Code Editor Mockup -->
+          <div class="mock-editor">
+            <div class="editor-header">
+              <div class="window-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="editor-tab active">
+                <svg class="file-icon" viewBox="0 0 24 24" width="12" height="12" fill="#38BDF8" style="vertical-align: middle; margin-right: 4px;">
+                  <path d="M14.4 6L12.8 4H4.8C3.92 4 3.2 4.72 3.2 5.6V18.4C3.2 19.28 3.92 20 4.8 20H19.2C20.08 20 20.8 19.28 20.8 18.4V7.6C20.8 6.72 20.08 6 19.2 6H14.4ZM19.2 18.4H4.8V5.6H12L13.6 7.2H19.2V18.4Z"/>
+                </svg>
+                auth.py
+              </div>
+            </div>
+            <div class="editor-content">
+              <div class="line-numbers">
+                <span>1</span><span>2</span><span>3</span><span>4</span>
+              </div>
+              <pre class="code-lines"><code><span class="keyword">import</span> verification
+
+# Verifying incoming payload handshake
+verification.validate_otp_handshake()</code></pre>
+            </div>
+            <div class="editor-terminal">
+              <div class="terminal-header">Terminal Output</div>
+              <div class="terminal-content">
+                <span class="terminal-text" style="color: #fbbf24;">⚠ Waiting for client input: Enter 6-digit OTP code...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side Auth Card -->
+        <div class="auth-form-panel">
+          <div class="card">
+            <!-- IDE Window Styling for Mobile View -->
+            <div class="card-window-header">
+              <div class="window-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="card-window-title">otp_verify.py</div>
+            </div>
+
+            <div class="card-logo">
+              <img class="theme-logo" src="https://website-main.blr1.cdn.digitaloceanspaces.com/marketing-landingpage-files/BrototypeLogos/brototype_without_tagline_white_log_svg.svg" alt="Brototype">
+            </div>
+            <h2 class="card-title">Verify Your Account</h2>
+            <p class="card-subtitle" id="otpSubtitle">We sent a 6-digit code to +91 98765 43210</p>
+            
+            <div class="secure-badge">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+              </svg>
+              Secure verification code
+            </div>
+            
+            <form id="otpForm">
+              <div class="otp-container">
+                <input type="number" class="otp-digit" maxlength="1" required data-index="0" autofocus>
+                <input type="number" class="otp-digit" maxlength="1" required data-index="1">
+                <input type="number" class="otp-digit" maxlength="1" required data-index="2">
+                <input type="number" class="otp-digit" maxlength="1" required data-index="3">
+                <input type="number" class="otp-digit" maxlength="1" required data-index="4">
+                <input type="number" class="otp-digit" maxlength="1" required data-index="5">
+              </div>
+              
+              <button type="submit" class="btn-primary" id="otpVerifyBtn">
+                <span>Verify & Start Learning</span>
+              </button>
+            </form>
+            
+            <p class="resend-text">
+              Didn't receive the code? 
+              <button class="resend-link" id="resendOtpBtn" disabled>Resend in 30s</button>
+            </p>
+            
+            <p class="resend-text" style="margin-top: 15px;">
+              <a href="#" id="changePhoneBtn" class="resend-link" style="color: var(--text-muted)">Change phone number</a>
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 

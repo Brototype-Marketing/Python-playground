@@ -1579,5 +1579,334 @@ body.light #playgroundView .terminal-inline-input { color: #1a1a1a; caret-color:
   }
 }
 
+/* --------------------------------------------------------------------------
+   DEVELOPER SIGNUP SPLIT LAYOUT STYLES
+   -------------------------------------------------------------------------- */
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 40px auto;
+  min-height: 80vh;
+  padding: 0 20px;
+}
+
+.auth-layout .card {
+  margin: 0;
+  max-width: 100%;
+}
+
+.auth-visual-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.visual-header {
+  margin-bottom: 28px;
+}
+
+.visual-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--red);
+  background: rgba(212, 44, 44, 0.1);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+
+.visual-title {
+  font-family: var(--font-heading);
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-main);
+  margin-bottom: 12px;
+}
+
+.visual-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Mock Editor Window */
+.mock-editor {
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  font-family: var(--font-code);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.editor-header {
+  background: #1B1B1E;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  gap: 16px;
+}
+
+.window-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.window-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.window-dots .dot.red { background: #FF5F56; }
+.window-dots .dot.yellow { background: #FFBD2E; }
+.window-dots .dot.green { background: #27C93F; }
+
+.editor-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.editor-tab.active {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.editor-content {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  padding: 20px 8px;
+  min-height: 160px;
+  background: #111112;
+}
+
+.line-numbers {
+  display: flex;
+  flex-direction: column;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: right;
+  padding-right: 14px;
+  user-select: none;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.code-lines {
+  margin: 0;
+  font-family: inherit;
+  color: #E2E8F0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.code-lines code {
+  font-family: inherit;
+}
+
+.code-lines .keyword { color: #F43F5E; font-weight: 600; }
+.code-lines .function { color: #38BDF8; }
+.code-lines .string { color: #34D399; }
+.code-lines .comment { color: #64748B; font-style: italic; }
+
+.editor-terminal {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: #09090b;
+  padding: 14px 18px;
+}
+
+.terminal-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.terminal-content {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-code);
+}
+
+.terminal-success {
+  color: var(--success-color);
+}
+
+.terminal-text {
+  color: #cccccc;
+}
+
+/* Feature Grid Cards */
+.marketing-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.feature-card {
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 18px;
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.feature-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* Light Theme Variables Adaptation */
+body.light .mock-editor {
+  background: #F8FAFC;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+body.light .editor-header {
+  background: #E2E8F0;
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light .editor-tab.active {
+  background: rgba(0, 0, 0, 0.03);
+  color: #0F172A;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light .editor-content {
+  background: #FFFFFF;
+}
+
+body.light .line-numbers {
+  color: rgba(0, 0, 0, 0.25);
+}
+
+body.light .code-lines {
+  color: #1E293B;
+}
+
+body.light .editor-terminal {
+  background: #F1F5F9;
+  border-top-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light .terminal-header {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+body.light .terminal-text {
+  color: #334155;
+}
+
+body.light .feature-card {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.04);
+}
+
+body.light .feature-card:hover {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light .feature-icon {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Responsive design media query overrides */
+@media (max-width: 1024px) {
+  .auth-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin: 20px auto;
+    min-height: auto;
+  }
+  
+  .auth-visual-panel {
+    display: none;
+  }
+  
+  .auth-layout .card {
+    max-width: 480px;
+    margin: 40px auto;
+  }
+}
+
+/* Card Window Header Styling for Mobile IDE Feel */
+.card-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 24px;
+}
+
+.card-window-title {
+  font-size: 11px;
+  font-family: var(--font-code);
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+body.light .card-window-header {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
 
 
