@@ -412,6 +412,14 @@ input:focus, select:focus {
   border: 1px solid var(--line);
   box-shadow: none;
   transition: var(--transition);
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Chrome, Safari, Edge, Opera */
+.otp-digit::-webkit-outer-spin-button,
+.otp-digit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .otp-digit:focus {

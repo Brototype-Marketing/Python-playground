@@ -1,6 +1,5 @@
-// Service Worker to handle stdin input requests, cache assets, and inject COI headers
-const SW_VERSION = '1.2.0';
-const CACHE_NAME = 'brototype-ctc-cache-v1.2.0';
+const SW_VERSION = '1.3.0';
+const CACHE_NAME = 'brototype-ctc-cache-v1.3.0';
 
 const PRECACHE_ASSETS = [
   './',
