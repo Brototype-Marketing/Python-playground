@@ -23,13 +23,17 @@ let leadsCurrentPage = 1;
 let leadsTotalPages = 1;
 
 // Determine if we are on the Admin portal or the Playground
-const isAdminPage = window.location.pathname.includes('admin.html');
+function checkIsAdminPage() {
+  return window.location.pathname.includes('admin.html') || 
+         window.location.pathname.includes('/admin') || 
+         document.getElementById('adminLoginForm') !== null;
+}
 
 function initPage() {
   initToasts();
   initTheme();
 
-  if (isAdminPage) {
+  if (checkIsAdminPage()) {
     initAdminPage();
   } else {
     initPlaygroundPage();
