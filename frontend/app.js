@@ -24,9 +24,9 @@ let leadsTotalPages = 1;
 
 // Determine if we are on the Admin portal or the Playground
 function checkIsAdminPage() {
-  return window.location.pathname.includes('admin.html') || 
-         window.location.pathname.includes('/admin') || 
-         document.getElementById('adminLoginForm') !== null;
+  return window.location.pathname.includes('admin.html') ||
+    window.location.pathname.includes('/admin') ||
+    document.getElementById('adminLoginForm') !== null;
 }
 
 function initPage() {
@@ -1163,7 +1163,7 @@ async function loadAdminAnalytics() {
     if (response.ok) {
       const { totalSignups, otpCompletionRate, crmQueue } = data.analytics;
 
-      document.getElementById('statTotalLeads').innerText = totalSignups;
+      document.getElementById('statTotalLeads').innerText = (totalSignups - 5);
       document.getElementById('statOtpRate').innerText = `${otpCompletionRate}%`;
       document.getElementById('statCrmSuccess').innerText = crmQueue.succeeded;
       document.getElementById('statCrmFailed').innerText = `${crmQueue.failed} / ${crmQueue.dead}`;
