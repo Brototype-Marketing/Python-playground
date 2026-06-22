@@ -699,6 +699,19 @@ body.light .marketing-features {
   flex: 1;
 }
 
+#customDateRange {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex: 2;
+  min-width: 300px;
+}
+
+#customDateRange input[type="date"] {
+  min-width: 130px;
+  padding: 12px 14px;
+}
+
 .table-container {
   background: var(--card);
   border: 1px solid var(--line);
@@ -1984,6 +1997,47 @@ body.light .card-window-header {
   body:not(.playground-active) .form-group {
     margin-bottom: 16px !important;
   }
+}
+
+/* Leads Trend Chart Custom Styles */
+.chart-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--line);
+}
+
+body.light .chart-tabs {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.chart-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 16px !important;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.chart-tab:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.light .chart-tab:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.chart-tab.active {
+  background: var(--red) !important;
+  color: #ffffff !important;
+  box-shadow: var(--elevation-primary-glow);
 }
 
 

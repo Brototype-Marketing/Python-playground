@@ -91,7 +91,23 @@
           </div>
         </div>
 
-        <!-- Row 2: Leads Management Table -->
+        <!-- Row 2: Leads Trend Chart -->
+        <div class="lesson-details-card" id="leadsChartCard" style="background: var(--bg-card);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <h2 class="lesson-details-title" style="margin-bottom: 0;">Leads Trend Analysis</h2>
+            <div class="chart-tabs">
+              <button class="btn-small chart-tab active" data-range="daily">Daily</button>
+              <button class="btn-small chart-tab" data-range="weekly">Weekly</button>
+              <button class="btn-small chart-tab" data-range="monthly">Monthly</button>
+              <button class="btn-small chart-tab" data-range="all">All</button>
+            </div>
+          </div>
+          <div style="position: relative; height: 320px; width: 100%;">
+            <canvas id="leadsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Row 3: Leads Management Table -->
         <div class="lesson-details-card" style="background: var(--bg-card);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
             <h2 class="lesson-details-title" style="margin-bottom: 0;">Lead Registry</h2>
@@ -126,6 +142,19 @@
             </select>
 
             <input type="text" id="sourceFilter" placeholder="Campaign Source ID...">
+
+            <select id="dateFilter">
+              <option value="">All Dates</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="custom">Custom Range</option>
+            </select>
+
+            <div id="customDateRange" style="display: none; align-items: center; gap: 8px;">
+              <input type="date" id="startDateFilter">
+              <span style="color: var(--text-muted)">to</span>
+              <input type="date" id="endDateFilter">
+            </div>
             
             <button class="btn-small" id="applyFiltersBtn" style="padding: 12px 20px;">Apply</button>
             <button class="btn-small" id="resetFiltersBtn" style="padding: 12px 20px; background: rgba(255,255,255,0.02)">Clear</button>
@@ -192,6 +221,7 @@
     </section>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

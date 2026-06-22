@@ -1,6 +1,7 @@
 // Brototype Python Playground — Main UI & Logic script
-// const API_BASE_URL = 'http://localhost:3000';
-const API_BASE_URL = 'https://ctc.brototype.com';
+const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '')
+  ? 'http://localhost:3000'
+  : 'https://ctc.brototype.com';
 
 
 // Global state
@@ -21,6 +22,8 @@ let _uiBound = false;
 let adminToken = null;
 let leadsCurrentPage = 1;
 let leadsTotalPages = 1;
+let leadsChartInstance = null;
+let adminChartData = null;
 
 // Determine if we are on the Admin portal or the Playground
 function checkIsAdminPage() {
@@ -539,6 +542,12 @@ function initTheme() {
 
     if (editor) {
       editor.setOption('theme', light ? 'default' : 'material-darker');
+    }
+
+    if (typeof renderLeadsChart === 'function' && adminChartData) {
+      const activeTab = document.querySelector('.chart-tab.active');
+      const range = activeTab ? activeTab.getAttribute('data-range') : 'daily';
+      renderLeadsChart(range);
     }
   };
 
@@ -1089,6 +1098,31 @@ function initAdminPage() {
     showToast("Admin logged out.", "info");
   });
 
+  // Toggle Date Range inputs
+  const dateFilter = document.getElementById('dateFilter');
+  const customDateRange = document.getElementById('customDateRange');
+  if (dateFilter && customDateRange) {
+    dateFilter.addEventListener('change', () => {
+      if (dateFilter.value === 'custom') {
+        customDateRange.style.display = 'flex';
+      } else {
+        customDateRange.style.display = 'none';
+        document.getElementById('startDateFilter').value = '';
+        document.getElementById('endDateFilter').value = '';
+      }
+    });
+  }
+
+  // Chart range tab switcher click handlers
+  document.querySelectorAll('.chart-tab').forEach(btn => {
+    btn.onclick = (e) => {
+      document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      const range = e.target.getAttribute('data-range');
+      renderLeadsChart(range);
+    };
+  });
+
   // Apply Filter Button Click
   document.getElementById('applyFiltersBtn').onclick = () => {
     leadsCurrentPage = 1;
@@ -1101,6 +1135,14 @@ function initAdminPage() {
     document.getElementById('qualificationFilter').value = '';
     document.getElementById('countryFilter').value = '';
     document.getElementById('sourceFilter').value = '';
+
+    if (dateFilter) dateFilter.value = '';
+    if (customDateRange) customDateRange.style.display = 'none';
+    const startDateFilter = document.getElementById('startDateFilter');
+    if (startDateFilter) startDateFilter.value = '';
+    const endDateFilter = document.getElementById('endDateFilter');
+    if (endDateFilter) endDateFilter.value = '';
+
     leadsCurrentPage = 1;
     loadAdminLeads();
   };
@@ -1126,7 +1168,13 @@ function initAdminPage() {
     const country = document.getElementById('countryFilter').value;
     const source_id = document.getElementById('sourceFilter').value;
 
-    const params = new URLSearchParams({ search, qualification, country, source_id });
+    const { startDate, endDate } = getAdminLeadsDateParams();
+
+    const paramsObj = { search, qualification, country, source_id };
+    if (startDate) paramsObj.startDate = startDate;
+    if (endDate) paramsObj.endDate = endDate;
+
+    const params = new URLSearchParams(paramsObj);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/leads/export?${params.toString()}`, {
@@ -1161,16 +1209,179 @@ async function loadAdminAnalytics() {
     const data = await response.json();
 
     if (response.ok) {
-      const { totalSignups, otpCompletionRate, crmQueue } = data.analytics;
+      const { totalSignups, otpCompletionRate, crmQueue, chartData } = data.analytics;
+      adminChartData = chartData;
 
       document.getElementById('statTotalLeads').innerText = (totalSignups - 5);
       document.getElementById('statOtpRate').innerText = `${otpCompletionRate}%`;
       document.getElementById('statCrmSuccess').innerText = crmQueue.succeeded;
       document.getElementById('statCrmFailed').innerText = `${crmQueue.failed} / ${crmQueue.dead}`;
+
+      // Initialize leads chart
+      renderLeadsChart('daily');
     }
   } catch (error) {
     console.error("Failed to load metrics:", error);
   }
+}
+
+function renderLeadsChart(range) {
+  if (!adminChartData) return;
+
+  const chartEl = document.getElementById('leadsChart');
+  if (!chartEl) return;
+
+  const dataList = adminChartData[range] || [];
+
+  // Generate labels and values
+  const labels = [];
+  const counts = [];
+
+  dataList.forEach(item => {
+    let label = item._id;
+    if (range === 'monthly') {
+      const parts = item._id.split('-');
+      if (parts.length === 2) {
+        const date = new Date(parts[0], parts[1] - 1, 1);
+        label = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+      }
+    } else if (range === 'weekly') {
+      const parts = item._id.split('-W');
+      if (parts.length === 2) {
+        label = `Week ${parts[1]}, ${parts[0]}`;
+      }
+    } else if (range === 'daily' || range === 'all') {
+      const parts = item._id.split('-');
+      if (parts.length === 3) {
+        const date = new Date(parts[0], parts[1] - 1, parts[2]);
+        label = date.toLocaleString('default', { month: 'short', day: 'numeric' });
+      }
+    }
+    labels.push(label);
+    counts.push(item.count);
+  });
+
+  const isLight = document.body.classList.contains('light');
+  const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.06)';
+  const textColor = isLight ? '#3b3b3b' : '#cccccc';
+  const pointBorderColor = isLight ? '#ffffff' : '#1e1e1e';
+
+  // Setup gradient
+  const ctx = chartEl.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+  gradient.addColorStop(0, 'rgba(212, 44, 44, 0.25)');
+  gradient.addColorStop(1, 'rgba(212, 44, 44, 0)');
+
+  const chartDataConfig = {
+    labels: labels,
+    datasets: [{
+      label: 'Leads',
+      data: counts,
+      borderColor: '#d42c2c',
+      borderWidth: 3,
+      pointBackgroundColor: '#d42c2c',
+      pointBorderColor: pointBorderColor,
+      pointHoverRadius: 7,
+      pointHoverBackgroundColor: '#d42c2c',
+      pointHoverBorderColor: '#ffffff',
+      fill: true,
+      backgroundColor: gradient,
+      tension: 0.4
+    }]
+  };
+
+  if (leadsChartInstance) {
+    // Update existing chart
+    leadsChartInstance.data = chartDataConfig;
+    leadsChartInstance.options.scales.x.ticks.color = textColor;
+    leadsChartInstance.options.scales.y.ticks.color = textColor;
+    leadsChartInstance.options.scales.y.grid.color = gridColor;
+    leadsChartInstance.options.plugins.tooltip.backgroundColor = isLight ? '#ffffff' : '#1e1e1e';
+    leadsChartInstance.options.plugins.tooltip.titleColor = isLight ? '#000000' : '#ffffff';
+    leadsChartInstance.options.plugins.tooltip.bodyColor = isLight ? '#000000' : '#ffffff';
+    leadsChartInstance.options.plugins.tooltip.borderColor = isLight ? '#e5e5e5' : '#414141';
+    leadsChartInstance.update();
+  } else {
+    // Create new chart
+    leadsChartInstance = new Chart(chartEl, {
+      type: 'line',
+      data: chartDataConfig,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: isLight ? '#ffffff' : '#1e1e1e',
+            titleColor: isLight ? '#000000' : '#ffffff',
+            bodyColor: isLight ? '#000000' : '#ffffff',
+            borderColor: isLight ? '#e5e5e5' : '#414141',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return `Leads: ${context.parsed.y}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: textColor, font: { family: 'inherit', size: 11 } }
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: textColor, font: { family: 'inherit', size: 11 } },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+}
+
+function getAdminLeadsDateParams() {
+  const dateFilterEl = document.getElementById('dateFilter');
+  if (!dateFilterEl) return { startDate: '', endDate: '' };
+
+  const dateVal = dateFilterEl.value;
+  let startDate = '';
+  let endDate = '';
+
+  if (dateVal === 'today') {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+    startDate = start.toISOString();
+    endDate = end.toISOString();
+  } else if (dateVal === 'yesterday') {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const start = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0, 0);
+    const end = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999);
+    startDate = start.toISOString();
+    endDate = end.toISOString();
+  } else if (dateVal === 'custom') {
+    const startVal = document.getElementById('startDateFilter').value;
+    const endVal = document.getElementById('endDateFilter').value;
+
+    if (startVal) {
+      const parts = startVal.split('-');
+      const start = new Date(parts[0], parts[1] - 1, parts[2], 0, 0, 0, 0);
+      startDate = start.toISOString();
+    }
+    if (endVal) {
+      const parts = endVal.split('-');
+      const end = new Date(parts[0], parts[1] - 1, parts[2], 23, 59, 59, 999);
+      endDate = end.toISOString();
+    }
+  }
+
+  return { startDate, endDate };
 }
 
 async function loadAdminLeads() {
@@ -1179,14 +1390,21 @@ async function loadAdminLeads() {
   const country = document.getElementById('countryFilter').value;
   const source_id = document.getElementById('sourceFilter').value;
 
-  const params = new URLSearchParams({
+  const { startDate, endDate } = getAdminLeadsDateParams();
+
+  const paramsObj = {
     search,
     qualification,
     country,
     source_id,
     page: leadsCurrentPage,
     limit: 10
-  });
+  };
+
+  if (startDate) paramsObj.startDate = startDate;
+  if (endDate) paramsObj.endDate = endDate;
+
+  const params = new URLSearchParams(paramsObj);
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/admin/leads?${params.toString()}`, {
@@ -1225,7 +1443,7 @@ async function loadAdminLeads() {
       leadsCurrentPage = pageInfo.page;
       leadsTotalPages = pageInfo.pages;
 
-      document.getElementById('paginationInfo').innerText = `Showing page ${leadsCurrentPage} of ${leadsTotalPages || 1}`;
+      document.getElementById('paginationInfo').innerText = `Showing page ${leadsCurrentPage} of ${leadsTotalPages || 1} (${pageInfo.total} total leads)`;
       document.getElementById('prevPageBtn').disabled = leadsCurrentPage <= 1;
       document.getElementById('nextPageBtn').disabled = leadsCurrentPage >= leadsTotalPages;
     }

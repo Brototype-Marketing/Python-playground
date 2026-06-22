@@ -199,19 +199,19 @@ function authenticateUser(req, res, next) {
 function authenticateAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: "Access denied. Admin token required." });
+    return res.status(401).json({ error: "Access denied." });
   }
 
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
     if (decoded.role !== 'super_admin') {
-      return res.status(403).json({ error: "Forbidden. Admin privileges required." });
+      return res.status(403).json({ error: "Forbidden." });
     }
     req.admin = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired admin session token." });
+    return res.status(401).json({ error: "Invalid or expired session." });
   }
 }
 
@@ -590,11 +590,50 @@ app.get('/api/admin/analytics', authenticateAdmin, async (req, res) => {
 
     const totalSignups = await usersColl.countDocuments();
 
-    // Signups over time (Last 30 Days)
+    // 1. Daily Signups (Last 30 Days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const signupsOverTime = await usersColl.aggregate([
+    const dailyData = await usersColl.aggregate([
       { $match: { created_at: { $gte: thirtyDaysAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$created_at" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    // 2. Weekly Signups (Last 12 Weeks)
+    const twelveWeeksAgo = new Date();
+    twelveWeeksAgo.setDate(twelveWeeksAgo.getDate() - 12 * 7);
+    const weeklyData = await usersColl.aggregate([
+      { $match: { created_at: { $gte: twelveWeeksAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-W%U", date: "$created_at" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    // 3. Monthly Signups (Last 12 Months)
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setDate(twelveMonthsAgo.getDate() - 365);
+    const monthlyData = await usersColl.aggregate([
+      { $match: { created_at: { $gte: twelveMonthsAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m", date: "$created_at" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    // 4. All Signups (Grouped by Day)
+    const allData = await usersColl.aggregate([
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$created_at" } },
@@ -640,7 +679,12 @@ app.get('/api/admin/analytics', authenticateAdmin, async (req, res) => {
           failed: crmFailedCount,
           dead: crmDeadCount
         },
-        signupsOverTime,
+        chartData: {
+          daily: dailyData,
+          weekly: weeklyData,
+          monthly: monthlyData,
+          all: allData
+        },
         breakdowns: {
           qualification: qualificationBreakdown,
           country: countryBreakdown,
@@ -657,7 +701,7 @@ app.get('/api/admin/analytics', authenticateAdmin, async (req, res) => {
 
 // 3. Admin Leads Management (Paginated & Filterable)
 app.get('/api/admin/leads', authenticateAdmin, async (req, res) => {
-  let { search, qualification, country, source_id, page, limit } = req.query;
+  let { search, qualification, country, source_id, page, limit, startDate, endDate } = req.query;
 
   page = parseInt(page || '1', 10);
   limit = parseInt(limit || '10', 10);
@@ -680,6 +724,15 @@ app.get('/api/admin/leads', authenticateAdmin, async (req, res) => {
   }
   if (source_id) {
     query.source_id = source_id;
+  }
+  if (startDate || endDate) {
+    query.created_at = {};
+    if (startDate) {
+      query.created_at.$gte = new Date(startDate);
+    }
+    if (endDate) {
+      query.created_at.$lte = new Date(endDate);
+    }
   }
 
   try {
@@ -710,7 +763,7 @@ app.get('/api/admin/leads', authenticateAdmin, async (req, res) => {
 
 // 4. Export leads as CSV
 app.get('/api/admin/leads/export', authenticateAdmin, async (req, res) => {
-  let { search, qualification, country, source_id } = req.query;
+  let { search, qualification, country, source_id, startDate, endDate } = req.query;
   const query = {};
 
   if (search) {
@@ -722,6 +775,11 @@ app.get('/api/admin/leads/export', authenticateAdmin, async (req, res) => {
   if (qualification) query.qualification = qualification;
   if (country) query.country = country;
   if (source_id) query.source_id = source_id;
+  if (startDate || endDate) {
+    query.created_at = {};
+    if (startDate) query.created_at.$gte = new Date(startDate);
+    if (endDate) query.created_at.$lte = new Date(endDate);
+  }
 
   try {
     const leads = await req.db.collection('users').find(query).sort({ created_at: -1 }).toArray();
